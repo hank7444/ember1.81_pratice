@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>App</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- build:css(tmp/result) assets/app.min.css -->
+  <!--<link rel="stylesheet" href="assets/normalize.css">-->
+
+
+  <link rel="stylesheet" href="assets/style.css">
+
+
+  <!-- bootstrap css -->
+  <link rel="stylesheet" href="vendor/bootstrap/bootstrap-responsive.min.css">
+  <link rel="stylesheet" href="vendor/bootstrap/bootstrap.css">
+  <link rel="stylesheet" href="vendor/bootstrap/font-awesome.min.css">
+  <link rel="stylesheet" href="vendor/bootstrap/bs-growl-notifications.min.css">
+
+  <!-- flatty模板 css-->
+  <link rel="stylesheet" href="vendor/flatty/stylesheets/light-theme.css">
+  <link rel="stylesheet" href="vendor/flatty/stylesheets/theme-colors.css">
+  <link rel="stylesheet" href="vendor/flatty/jquery/jquery_ui.css">
+
+  <!-- 前端部門自己包裝套件css -->
+  <link rel="stylesheet" href="assets/components/lightbox-loading.css">
+  <link rel="stylesheet" href="assets/components/lightbox-msg.css">
+  <link rel="stylesheet" href="assets/components/upload-file.css">
+  <link rel="stylesheet" href="assets/components/upload-img.css">
+  <link rel="stylesheet" href="vendor/flatty/stylesheets/plugins/bootstrap_datetimepicker/bootstrap-datetimepicker.css">
+  <link rel="stylesheet" href="vendor/flatty/stylesheets/plugins/bootstrap_daterangepicker/bootstrap-daterangepicker.css">
+  <link rel="stylesheet" href="assets/components/statistic-list-ui.css">
+  <!-- endbuild -->  
+
+
+  <link rel="stylesheet" href="assets/f2e.css">
+
+
+
+  <!-- for more details visit: https://github.com/yeoman/grunt-usemin -->
+
+
+  <!-- build:js(tmp/result) assets/config.min.js -->
+
+    <script src="/config/environment.js"></script>
+    <!-- @endif -->
+
+      <script src="/config/environments/test.js"></script>
+  <!-- endbuild -->
+
+
+
+  <!-- build:js(.) assets/vendor.min.js -->
+  <script src="/vendor/jquery/jquery.js"></script>
+  <script src="/vendor/bootstrap/bootstrap.min.js"></script>
+  
+  <script src="/vendor/handlebars/handlebars.js"></script>
+  <script src="/vendor/ember/ember.js"></script>
+  <script src="/vendor/loader.js"></script>
+  <script src="/vendor/ember-resolver/dist/ember-resolver.js"></script>
+  <script src="/vendor/ic-ajax/main.js"></script>
+  
+
+  <!-- 第三方套件路徑置放區 -->
+
+  <!-- jquery套件-->
+  <script src="/vendor/jquery/jquery.ui.widget.js"></script>
+  <script src="/vendor/jquery/jquery.color.js"></script>
+  <script src="/vendor/jquery/fileupload/jquery.fileupload.js"></script>
+  <script src="/vendor/jquery/fileupload/jquery.iframe-transport.js"></script>
+  <script src="/vendor/jquery/plugins/jquery.watermark.min.js"></script>
+  <script src="/vendor/jquery/plugins/jquery.validate.min.js"></script>
+  <script src="/vendor/jquery/plugins/jquery.cookie.min.js"></script>
+  <script src="/vendor/moment.min.js"></script>
+  <script src="/vendor/showdown/showdown.min.js"></script>
+
+  <script src="/vendor/jquery/jquery-ui-1.10.3.custom.js"></script>
+
+
+  <!-- bootstrap套件-->
+  <script src="/vendor/bootstrap/js/bs-core.min.js"></script>
+  <script src="/vendor/bootstrap/js/bs-button.min.js"></script>
+  <script src="/vendor/bootstrap/js/bs-notifications.min.js"></script>
+  <script src="/vendor/bootstrap/js/bs-growl-notifications.min.js"></script>
+  <script src="/vendor/bootstrap/js/bs-alert.min.js"></script>
+  <script src="/vendor/bootstrap/js/bs-modal.min.js"></script>
+
+  <!-- 前端部門自己包裝的套件-->
+  <script src="/vendor/flatty/javascripts/plugins/bootstrap_datetimepicker/bootstrap-datetimepicker.js"></script>
+  <script src="/vendor/flatty/javascripts/plugins/bootstrap_daterangepicker/bootstrap-daterangepicker.js"></script>
+  <script src="/assets/vendor/ckeditor/ckeditor.js"></script>
+
+
+
+
+  
+  <!-- endbuild -->
+
+
+
+  <!-- build:js(tmp/result) assets/app.min.js -->
+  <!-- <script src="/assets/javascripts/jquery/jquery.min.js"></script> -->
+  <script src="/assets/app.js"></script>
+  <script src="/assets/templates.js"></script>
+  <!-- endbuild -->
+
+
+
+  <link rel="stylesheet" href="/vendor/qunit/qunit/qunit.css">
+  <script src="/vendor/qunit/qunit/qunit.js"></script>
+
+  <style>
+    #ember-testing-container {
+      position: absolute;
+      background: white;
+      bottom: 0;
+      right: 0;
+      width: 640px;
+      height: 384px;
+      overflow: auto;
+      z-index: 9999;
+      border: 1px solid #ccc;
+    }
+    #ember-testing {
+      zoom: 50%;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="qunit"></div>
+  <div id="qunit-fixture"></div>
+  <script src="/tests/tests.js"></script>
+  <script src="/tests/test_helper.js"></script>
+  <script src="/tests/test_loader.js"></script>
+</body>
+</html>

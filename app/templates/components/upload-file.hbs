@@ -1,0 +1,27 @@
+<input id="file" name="file"  type="file"/>
+
+<div class="dsrp">
+	{{options.dsrp}}
+</div>
+
+<div>
+	<a {{bind-attr href=fileUrlShow}} target="_blank">
+		<img class="img-polaroid photo"  {{bind-attr src=fileImgShow}} />
+	</a>
+</div>
+
+<br>
+
+<div>
+	<a name="btnUpload" class="btn btn-small btn-success" href="javascript:void(0);"  for="file">上傳檔案</a>
+</div>
+
+<br>
+
+{{#if options.progressbar}}
+	{{progress-bar options=progressbar}}
+{{/if}}
+
+{{#if options.statusMsg}}
+	<span class="uploadStatus">準備上傳</span>
+{{/if}}

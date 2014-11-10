@@ -1,0 +1,27 @@
+
+{{#each data}}
+    {{#if isPage}}
+        <li>
+            {{#if page.params}}
+                {{#link-to page.href page.params}}
+                    <i {{bind-attr class="icon"}}></i>
+                    <span>{{name}}</span>
+                {{/link-to}}
+            {{else}}
+                {{#link-to page.href}}
+                    <i {{bind-attr class="icon"}}></i>
+                    <span>{{name}}</span>
+                {{/link-to}}
+            {{/if}}
+        </li>
+    {{else}}
+        <li>
+            <a {{bind-attr class=":dropdown-collapse isOpen"}}>
+                <i {{bind-attr class="icon"}}></i>
+                <span>{{name}}</span>
+                <i class="icon-angle-down angle-down"></i>
+            </a>
+            {{pages-map pagemap=page}}
+        </li>
+    {{/if}}
+{{/each}}

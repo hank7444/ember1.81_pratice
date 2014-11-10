@@ -1,0 +1,19 @@
+<ul class="pagination pagination-sm">
+    {{#if hasPrev}}
+        <li class="prev"><a href="#" {{action changePage prevPage}}> ← Previous</a></li>
+    {{else}}
+        <li class="prev disabled"><a>← Previous</a></li>
+    {{/if}}
+
+    {{#each page in pages}}
+        <li {{bind-attr class=page.class}}><a href="#" {{action changePage page.num}}{{page.num}}</a></li>
+    {{/each}}
+
+
+    {{#if hasNext}}
+        <li class="next"><a href="#" {{action changePage nextPage}}>Next → </a></li>
+    {{else}}
+        <li class="next disabled"><a>Next → </a></li>
+    {{/if}}
+
+</ul>

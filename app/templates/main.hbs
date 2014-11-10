@@ -1,0 +1,35 @@
+
+
+{{header-ui options=menuData action="headerMenu"}}
+
+<div id="wrapper">
+
+	<div id="main-nav-bg"></div>
+      <nav id="main-nav">
+        <div class="navigation">
+          {{sidemenu-ui menuData=sidemenuData}}
+        </div>
+      </nav>
+  </div>
+
+	<section id="content">
+		<div class="container container-f2e">
+
+  			<div id="content-wrapper" class="row">
+  			{{outlet}}
+  			</div>
+  		
+  			<footer id="footer">
+  				<div class="footer-wrapper">
+  					<div class="row">
+  						<div class="col-sm-6 text"> Copyright © 2013 Hiiir.inc</div>
+  						<div class="col-sm-6 buttons">
+                
+              </div>
+  				  </div>
+          </div>
+  			</footer>
+		</div>
+	</section>
+  
+</div>

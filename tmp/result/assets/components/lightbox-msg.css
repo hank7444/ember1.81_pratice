@@ -1,0 +1,19 @@
+.component-lightbox-msg {
+    display: none;
+}
+
+
+.component-lightbox-msg .lightbox {
+    background: none repeat scroll 0 0 #000000;
+    border-radius: 10px 10px 10px 10px;
+    bottom: 50%;
+    color: #FFFFFF;
+    left: 45%;
+    opacity: .8;
+    padding: 10px;
+    position: fixed;
+    text-align: center;
+    width: 200px;
+    z-index: 10000;
+    font-size: 12px;    
+}

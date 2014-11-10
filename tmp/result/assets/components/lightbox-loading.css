@@ -1,0 +1,39 @@
+
+.component-lightbox-loading {
+    display: none;
+    z-index: 10000;
+    position: fixed;
+    left: 50%;
+    top: 30%;
+    margin-left: -100px;
+}
+
+
+.component-lightbox-loading .lightbox {
+    background: none repeat scroll 0 0 #000000;
+    border-radius: 10px;
+    color: #FFFFFF;
+    font-size: 12px;
+    opacity: 0.8;
+    padding: 10px;
+    text-align: center;
+    width: 200px;
+}
+
+.component-lightbox-loading .mask {
+    background-color: #000000;
+    height: 100%;
+    opacity: .6;
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: scroll;
+    bottom: 0;
+    position: fixed;
+    right: 0;
+    z-index: 9999;
+    display: none;
+}
+
+.component-lightbox-loading img {
+	padding-bottom: 3px;
+}

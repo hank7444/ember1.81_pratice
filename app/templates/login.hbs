@@ -1,0 +1,102 @@
+    
+        
+    <div class='login-container-header'>
+      <div class='container'>
+        <div class='row'>
+          <div class='col-sm-12'>
+            <div class='text-center'>
+              <!-- TODO: 這邊記得要改, 現在還是flatty的預設內容 -->
+              <img width="121" height="31" src="assets/images/logo_lg.svg" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class='middle-container'>
+      <div class='middle-row'>
+        <div class='middle-wrapper'>
+          <div class='login-container'>
+            <div class='container'>
+              <div class='row'>
+                <div class='col-sm-4 col-sm-offset-4'>
+                  <h1 class='text-center title'>發票系統-管理者後台</h1>
+
+                  
+                  {{#if errorMsg}}
+                    <div class='alert alert-danger alert-dismissable'>
+                      <!--
+                      <a class="close" data-dismiss="alert" href="#">&times;</a>
+                      -->
+                      <i class='icon-info-sign'></i>
+                      {{errorMsg}}
+                    </div>
+                  {{/if}}
+                  
+                  {{#view "validate" valueBinding="validateData" }}
+                  <form action='index.html' class='validate-form' method='get'>
+
+
+                    <div class="form-group">
+                      <div class='controls with-icon-over-input'>
+                        {{#view "watermark" watermark="請輸入SSO帳號"}}
+                          {{input name="account" class='form-control' type="text" value=account}}
+                        {{/view}}
+                        <i class='icon-user text-muted'></i>
+                        <span class='help-block'></span>   
+                      </div>
+                    </div>
+       
+
+                    <div class="form-group">
+                      <div class='controls with-icon-over-input'>
+                        {{#view "watermark" watermark="請輸入密碼"}}
+                          {{input name="password" class='form-control' type="password" value=password}}
+                        {{/view}}
+                        <i class='icon-lock text-muted'></i>
+                        <span class='help-block'></span>   
+                      </div>
+                    </div>
+
+
+                    <div class='checkbox'>
+                      <label for='remember_me'>
+
+                        {{input name="remember_me" type="checkbox"  checked=isRemember}}
+
+                        記住我
+                      </label>
+                    </div>
+                    <button class='btn btn-block' {{action 'login'}}>登入</button>
+                  </form>
+                  {{/view}}
+                  <div class='text-center'>
+                    <hr class='hr-normal'>
+                    <a href='forgot_password.html'>Forgot your password?</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class='login-container-footer'>
+            <div class='container'>
+              <div class='row'>
+                <div class='col-sm-12'>
+                  <!-- TODO: 這邊記得要改, 現在還是flatty的預設內容 -->
+                  <div class='text-center'>
+                    <a href='sign_up.html'>
+                      <i class='icon-user'></i>
+                      New to Flatty?
+                      <strong>Sign up</strong>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>

@@ -1,0 +1,30 @@
+{{#each data}}
+    {{#if isPage}}
+        {{#unless isHidden}}
+        <li>
+            {{#if page.params}}
+                {{#link-to page.href page.params}}
+                    <i {{bind-attr class="icon"}}></i>
+                    <span>{{name}}</span>
+                {{/link-to}}
+            {{else}}
+                {{#link-to page.href}}
+                    <i {{bind-attr class="icon"}}></i>
+                    <span>{{name}}</span>
+                {{/link-to}}
+            {{/if}}
+        </li>
+        {{/unless}}
+    {{else}}
+        {{#unless isHidden}}
+        <li>
+            <a {{bind-attr class=":dropdown-collapse isOpen"}}>
+                <i {{bind-attr class="icon"}}></i>
+                <span>{{name}}</span>
+                <i class="icon-angle-down angle-down"></i>
+            </a>
+            {{sidemenu-ui data=page}}
+        </li>
+        {{/unless}}
+    {{/if}}
+{{/each}}

@@ -1,0 +1,212 @@
+        
+
+  {{#bs-modal name="confirmModal" fade=true title=confirmTitle footerButtonsBinding="confirmModalButton"}}
+          {{confirmMessage}}
+  {{/bs-modal}}
+
+
+
+  {{#bs-modal name="editProjectModal" 
+              fade=true title=editProjectModalTitle 
+              footerButtonsBinding="editProjectModalButtons"}}
+
+      {{#if projectErrorMsg}}
+        {{bs-alert message="欄位未通過驗證，無法送出" type="danger" dismiss="false"}}
+      {{/if}}
+
+      {{#view "validate" valueBinding="projectValidateData" }}
+      <form id="test" class="form form-horizontal" style="margin-bottom: 0;" method="post" action="#" accept-charset="UTF-8">     
+        <div class='form-group'>
+          <label class='col-md-3 control-label' for='inputText1'>專案名稱:</label>
+          <div class='col-md-6'>
+              {{input name="projectName" type="text" class="form-control" value=projectData.projectName disabled="Y"}}
+             <span class='help-block'></span>  
+          </div>
+        </div>
+
+        <div class='form-group'>
+          <label class='col-md-3 control-label' for='inputText1'>所屬營業人:</label>
+
+           <div class='col-xs-4'>
+            {{view Ember.Select name="companyId" class="form-control form-control-f2e"
+                  contentBinding="editSelectData.projectCompanyData"
+                  optionLabelPath="content.companyName"
+                  optionValuePath="content.companyId"
+                  prompt="請選擇營業人"
+                  disabled=canSelectCompany
+                  valueBinding="projectData.companyId"}}
+
+            <span class='help-block'></span>  
+          </div>
+        </div>
+
+
+        <div class="form-group">
+          <label class="col-md-3 control-label">狀態:</label>
+          <div class="col-md-6">
+            <label class="radio radio-inline">
+              {{view "radioButton" name="status" selectionBinding="projectData.status" value="N"}}停用
+            </label>
+
+            <label class="radio radio-inline">
+              {{view "radioButton" name="status" selectionBinding="projectData.status" value="Y"}}啟用
+            </label>
+          </div>
+        </div>
+
+      </form>
+      {{/view}}
+
+  {{/bs-modal}}
+
+
+
+
+
+
+
+
+
+<div class="col-xs-12 fade-block" {{bind-attr class="show:hide-opacity:show-opacity"}}>
+
+        <div class="row">
+          <div class="col-sm-12">
+              <div class="page-header">
+
+                <h1 class="pull-left">
+                  <i class="icon-table"></i>
+                  <span>營業人資料列表管理</span>
+                </h1>
+
+                <div class="pull-right">
+
+                  <ul class="breadcrumb">
+                    <li>
+                      {{#link-to "main"}}
+                        <i class="icon-home"></i>
+                      {{/link-to}}
+                    </li>
+
+                    <li class="separator">
+                      <i class="icon-angle-right"></i>
+                    </li>
+
+                    <li>營業人管理</li>
+
+                    <li class="separator">
+                      <i class="icon-angle-right"></i>
+                    </li>
+
+                    <li class="active">營業人資料列表管理</li>
+                  </ul>
+
+                </div>
+              </div>
+          </div>
+        </div>
+        
+        <!--用statistic必須要的row-->
+        <div class="row">
+
+          {{statistic-list-ui options=statisticListData selectedItemValue=statisticListSelectedItem action="search"}}
+          
+        </div>
+
+        <div class="row">
+          <div class='col-sm-12'>
+
+            <div class='box bordered-box blue-border' style='margin-bottom:0;'>
+
+              <div class='box-header-f2e blue-background'>
+                  <div class='title'></div>
+                  <div class='actions'>
+
+                    <form class="navbar-form navbar-right hidden-xs" method="get" action="">
+                               
+                      <div class="form-group">
+                        {{#view "watermark" watermark="請輸入專案名稱或所屬營業人名稱"}}
+                          {{input name="search" type="text" value=search class="search-size-250-f2e"}}
+                          <button class="btn btn-xs" {{action search}}>搜尋</button>
+                          <button class="btn btn-xs" {{action clear}}>清除</button>
+                        {{/view}}                    
+                      </div>
+
+                    </form>
+
+                  </div>
+              </div>
+
+
+              <div class='box-content box-no-padding'>
+                <div class='responsive-table'>
+                  <div class='scrollable-area'>
+
+                    <table class='table table-striped' style='margin-bottom:0;'>
+                      <thead>
+                        <tr>
+                          <th>
+                            流水號
+                          </th>
+                          <th>
+                            專案名稱
+                          </th>
+                          <th>
+                            專案擁有人帳號
+                          </th>
+                          <th>
+                            所屬營業人
+                          </th>
+
+                          <th>
+                            console狀態
+                          </th>
+
+                          <th>
+                            狀態
+                          </th>
+
+                          <th>
+                            設定
+                          </th>
+
+                        </tr>
+                      </thead>
+                      <tbody>
+
+
+                      {{#each tableData}}
+                        <tr>
+                          <td>{{projectId}}</td>
+                          <td>{{projectName}}</td>
+                          <td>{{ownerAccount}}</td>
+                          <td>{{companyName}}</td>
+                          <td><span {{bind-attr class=":badge consoleStatusLabelClass"}}>{{consoleStatusMsg}}</span></td>
+                          <td><span {{bind-attr class=":badge statusLabelClass"}}>{{statusMsg}}</span></td>
+                          <td>
+                            <div class='text-left'>
+                              <button class="btn btn-xs btn-primary" {{action editProject projectId}}>
+                              {{editBtnMsg}} <i class="icon-edit"></i>
+                              </button>
+                            </div>
+                          </td>
+
+                          <td>
+
+                          </td>
+                        </tr>
+                      {{/each}}
+            
+                      </tbody>
+                    </table>
+
+
+                  </div>
+                </div>
+              </div>
+
+              {{pages-ui currentPage=pageData.currentPage totalPage=pageData.totalPage pageSize=pageData.pageSize action="changePage"}}
+            
+            </div>
+          </div>
+        </div>
+</div>

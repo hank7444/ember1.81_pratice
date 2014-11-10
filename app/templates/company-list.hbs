@@ -1,0 +1,264 @@
+
+{{#bs-modal name="confirmModal" fade=true title=confirmTitle footerButtonsBinding="confirmModalButton"}}
+  {{confirmMessage}}
+{{/bs-modal}}
+
+{{#bs-modal name="editCompanyModal" fade=true title=editCompanyModalTitle footerButtonsBinding="editCompanyModalButtons"}}
+
+  {{#if companyErrorMsg}}
+    {{bs-alert message="欄位未通過驗證，無法送出" type="danger" dismiss="false"}}
+  {{/if}}
+
+  {{#view "validate" valueBinding="companyValidateData" }}
+  <form id="test" class="form form-horizontal" style="margin-bottom: 0;" method="post" action="#" accept-charset="UTF-8">    
+
+    <div class='form-group'>
+      <label class='col-md-3 control-label' for='inputText1'>*公司名稱:</label>
+      <div class='col-md-6'>
+        {{#view "watermark" watermark="最少2字,最多30字"}}
+        {{input name="companyName" type="text" class="form-control" value=companyData.companyName}}
+        {{/view}}
+         <span class='help-block'></span>
+      </div>
+    </div>
+
+    <div class='form-group'>
+      <label class='col-md-3 control-label' for='inputText1'>*統一編號:</label>
+      <div class='col-md-6'>
+        {{#view "watermark" watermark="9位0~9阿拉伯數字"}}
+        {{input name="registrationNo" type="text" class="form-control" value=companyData.registrationNo}}
+        {{/view}}
+        <span class='help-block'></span>   
+      </div>
+    </div>
+
+    <div class='form-group'>
+      <label class='col-md-3 control-label' for='inputText1'>*核准文號:</label>
+      <div class='col-md-6'>
+        {{#view "watermark" watermark="最少10字,最多50字"}}
+        {{input name="permitWord" type="text" class="form-control" value=companyData.permitWord}}
+        {{/view}}
+        <span class='help-block'></span>   
+      </div>
+    </div>
+
+    <div class='form-group'>
+      <label class='col-md-3 control-label' for='inputText1'>*聯絡信箱:</label>
+      <div class='col-md-6'>
+        {{#view "watermark" watermark="請輸入聯絡信箱"}}
+        {{input name="contactPersonEmail" type="text" class="form-control" value=companyData.contactPersonEmail}}
+        {{/view}}
+        <span class='help-block'></span>   
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="col-md-3 control-label">審核狀態:</label>
+      <div class="col-md-6">
+        <label class="radio radio-inline">
+          {{view "radioButton" name="auditStatus" selectionBinding="companyData.auditStatus" value="auditing"}}審核中
+        </label>
+
+        <label class="radio radio-inline">
+          {{view "radioButton" name="auditStatus" selectionBinding="companyData.auditStatus" value="pass"}}審核通過
+        </label>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="col-md-3 control-label">狀態:</label>
+      <div class="col-md-6">
+        <label class="radio radio-inline">
+          {{view "radioButton" name="status" selectionBinding="companyData.status" value="N"}}停用
+        </label>
+
+        <label class="radio radio-inline">
+          {{view "radioButton" name="status" selectionBinding="companyData.status" value="Y" disabled=statusDisabled}}啟用
+        </label>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="col-md-3 control-label">軟體憑證上傳:</label>
+      <div class="col-md-6">
+    
+        {{view "uploadFileBasic" acceptFile="pfx" acceptSize="10" action="upload" errorAction="uploadError" class="upload-f2e"}}
+      
+        <span class='help-block'></span>   
+      </div>
+    </div>
+
+  </form>
+  {{/view}}
+
+{{/bs-modal}}
+
+
+
+
+<div class="col-xs-12 fade-block" {{bind-attr class="show:hide-opacity:show-opacity"}}>
+
+  <div class="row">
+    <div class="col-sm-12">
+        <div class="page-header">
+
+          <h1 class="pull-left">
+            <i class="icon-table"></i>
+            <span>營業人資料列表管理</span>
+          </h1>
+
+          <div class="pull-right">
+            <ul class="breadcrumb">
+
+            <li>
+              {{#link-to "main"}}
+                <i class="icon-home"></i>
+              {{/link-to}}
+            </li>
+
+            <li class="separator">
+              <i class="icon-angle-right"></i>
+            </li>
+
+            <li>營業人管理</li>
+
+            <li class="separator">
+              <i class="icon-angle-right"></i>
+            </li>
+
+            <li class="active">營業人資料列表管理</li>
+
+            </ul>
+          </div>
+        </div>
+    </div>
+  </div>
+
+
+  <div class="row">
+    <div class='col-sm-12'>
+
+      <div class="box">
+        <div class="box-contnet">
+          {{bs-button type="primary" title="新增營業人" clicked="newCompany"}}
+        </div>
+      </div>
+
+      <div class='box bordered-box blue-border' style='margin-bottom:0;'>
+            
+
+            <div class='box-header-f2e blue-background'>
+            
+              <div class='title'></div>
+              <div class='actions'>
+                <form class="navbar-form navbar-right hidden-xs" method="get" action="">
+                           
+                  <div class="form-group">
+                    {{#view "watermark" watermark="請輸入營業人名稱或統編"}}
+                      {{input name="search" type="text" value=search class="search-size-200-f2e"}}
+                      <button class="btn btn-xs" {{action search}}>搜尋</button>
+                      <button class="btn btn-xs" {{action clear}}>清除</button>
+                    {{/view}}                    
+                  </div>
+
+                </form>
+              </div>
+            </div>
+
+            <div class='box-content box-no-padding'>
+              <div class='responsive-table'>
+                <div class='scrollable-area'>
+
+                  <table class='table table-striped' style='margin-bottom:0;'>
+                    <thead>
+                      <tr>
+                        <th>
+                          流水號
+                        </th>
+                        <th>
+                          營業人
+                        </th>
+                        <th>
+                          統一編號
+                        </th>
+                        <th>
+                          核准日
+                        </th>
+
+                        <th>
+                          核准文號
+                        </th>
+
+                        <th>
+                          聯絡人信箱
+                        </th>
+
+                        <th>
+                          軟體憑證狀態
+                        </th>
+
+                        <th>
+                          審核狀態
+                        </th>
+
+                        <th>
+                          狀態
+                        </th>
+
+                        <th>
+                          編輯/刪除
+                        </th>
+
+                      </tr>
+                    </thead>
+
+                    <tbody>
+                    {{#each data in tableData}}
+                      <tr>
+                        <td>{{data.companyId}}</td>
+                        <td>{{data.companyName}}</td>
+                        <td>{{data.registrationNo}}</td>
+                        <td>{{data.permitDate}}</td>
+                        <td>{{data.permitWord}}</td>
+                        <td>{{data.contactPersonEmail}}</td>
+                        <td><span {{bind-attr class=":badge data.hasSoftwareCerfLabelClass"}}>{{data.hasSoftwareCerfMsg}}</span></td>
+                        <td><span {{bind-attr class=":badge data.auditStatusLabelClass"}}>{{data.auditStatusMsg}}</span></td>
+                        <td><span {{bind-attr class=":badge data.statusLabelClass"}}>{{data.statusMsg}}</span></td>
+                        <td>
+                          <div class='text-left'>
+                            <button class="btn btn-xs btn-primary" {{action editCompany data.companyId}}> 
+                            編輯 <i class="icon-edit"></i>
+                            </button>
+                            {{#if data.isDelete}}
+                            <button class="btn btn-xs btn-danger" {{action deleteConfirmModalForCompany data.companyId}}>
+                            刪除 <i class="icon-remove"></i>
+                            </button>
+                            {{/if}}
+
+                            {{#linkTo 'companyDetail' pageData.currentPage data.companyId class='btn btn-success btn-xs'}}
+                              詳細
+                            {{/linkTo}}
+                 
+                        
+                          </div>
+                        </td>
+                      </tr>
+                    {{/each}}
+                    </tbody>
+
+                  </table>
+
+                </div>
+              </div>
+            </div>
+          
+          {{pages-ui currentPage=pageData.currentPage totalPage=pageData.totalPage pageSize=pageData.pageSize action="changePage"}}
+
+     
+      </div>
+
+    </div>
+  </div>
+</div>
+
+{{outlet}}

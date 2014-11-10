@@ -1,0 +1,13 @@
+
+.component-static-list-ui .box .box-content {
+
+    background: none repeat scroll 0 0 #FFFFFF;
+    border: 1px solid #DDDDDD;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.055);
+    display: block;
+    
+}
+
+.component-static-list-ui .box .box-content.box-statistic .title {
+    margin: 0;
+}

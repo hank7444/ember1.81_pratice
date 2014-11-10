@@ -1,0 +1,3 @@
+.component-upload-img input[type=file] {
+    position: absolute; left: -9999em;
+}

@@ -1,0 +1,54 @@
+    <nav class="navbar navbar-default">
+
+   
+        {{#link-to titleLink classNames="navbar-brand"}}
+            <span class="logo">{{title}}</span>
+        {{/link-to}}
+
+        {{#if hasToggleBtn}}
+        <a class="toggle-nav btn pull-left" {{action "toggleBtnClick"}}>
+            <i class="icon-reorder"></i>
+        </a>
+        {{/if}}
+   
+        <ul class="nav">
+
+            <!-- usermenu:start -->
+            <li class="dropdown dark user-menu">
+
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+
+                    {{#if userPhoto}}
+                    <img width="23" height="23" {{bind-attr alt="userName" src="userPhoto"}} />
+                    {{/if}}
+                    
+                    <span class="user-name">{{userName}}</span>
+
+                    {{#if hasUserMenu}}
+                    <b class="caret"></b>
+                    {{/if}}
+                </a>
+
+                {{#if hasUserMenu}}
+                <ul class="dropdown-menu">
+                    {{#each userMenu}}
+                        <li>
+                            <a {{action menuClick actionName}}>
+                                <i {{bind-attr class="icon"}}></i>
+                                {{title}}
+                            </a>
+                        </li>
+                
+                        {{#if hasDivider}}
+                        <li class="divider"></li>
+                        {{/if}}
+                    {{/each}}
+                </ul>
+                {{/if}}
+            </li>
+            <!-- usermenu:end -->
+        </ul>
+
+
+    </nav>
+
