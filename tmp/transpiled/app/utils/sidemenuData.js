@@ -17,7 +17,7 @@ define("appkit/utils/sidemenuData",
                     icon: 'icon-table',
                     name: '營業人資料列表',
                     page: {
-                        href: 'companyList',
+                        href: 'main.companyList',
                         params: ' '
                     } 
                 },
@@ -26,7 +26,7 @@ define("appkit/utils/sidemenuData",
                     icon: 'icon-table',
                     name: '專案營業人設定',
                     page: {
-                        href: 'projectList',
+                        href: 'main.projectList',
                         params: ' '
                     } 
                 }
@@ -53,7 +53,7 @@ define("appkit/utils/sidemenuData",
     		                icon: 'icon-table',
     		                name: '測試menu layer3-1',
     		                page: {
-    		                    href: 'companyList',
+    		                    href: '',
     		                    params: ' '
     		                } 
     		            },
@@ -68,7 +68,7 @@ define("appkit/utils/sidemenuData",
     				                icon: 'icon-table',
     				                name: '測試menu layer4-1',
     				                page: {
-    				                    href: 'companyList',
+    				                    href: '',
     				                    params: ' '
     				                } 
     				            },
@@ -82,7 +82,7 @@ define("appkit/utils/sidemenuData",
     				                icon: 'icon-table',
     				                name: '測試menu layer4-1',
     				                page: {
-    				                    href: 'companyList',
+    				                    href: '',
     				                    params: ' '
     				                } 
     				            },

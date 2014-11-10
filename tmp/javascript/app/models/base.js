@@ -216,8 +216,6 @@ BaseModel.reopenClass({
         }
 
 
-
-
         var url = params.url;
         var host = params.host || config.host.default;
         var dataType = params.dataType || 'json';
@@ -263,40 +261,42 @@ BaseModel.reopenClass({
             ajaxData.contentType = 'application/json; charset=UTF-8';
             ajaxData.data = JSON.stringify(ajaxData.data);
         }
+
+        console.log(ajaxData);
      
         /*
         不在base做error callback, 讓error bubble上去到要使用的controller或route中,
         如果在這邊return 任何值, 在往上會被當作success callback處理
         因此改用Ember.RSVP.Promise, 可將success or error的response一路往上拋到呼叫的進入點
+
+        新版已經沒有這個問題，所以RSVP.Promise跟ic.ajax就拿掉了
         */
-        return new Ember.RSVP.Promise(function(resolve, reject) {
 
-            var success = function(res) {
+        var success = function(res) {
 
-                routeProxy.send('hideLoading');
+            routeProxy.send('hideLoading');
+            console.log('into success1');
 
-                console.log('into success1');
+            res = parseResponseText(res);
+            return res;
+        };
 
-                res = parseResponseText(res);
+        var error = function(res) {
 
-                resolve(res);
-            };
+            routeProxy.send('hideLoading');
+            console.log('into error1');
 
-            var error = function(res) {
+            /*
+            // 如果有錯誤, 需要共同的onerror來接, 可以用RSVP來達成
+            // reject全部都會被RSVP.onerror來接
+            var deferred = Ember.RSVP.defer();
+            deferred.reject("End of the world");
+            */
 
-                routeProxy.send('hideLoading');
-
-                console.log('into error1');
-
-                res = parseResponseText(res);
-
-                reject(res);
-            };
-
-            Ember.run.later(null, function() {
-                Ember.$.ajax(ajaxData).then(success, error);
-            }, 0);
-        });
+            res = parseResponseText(res);
+            return res;
+        };
+        return Ember.$.ajax(ajaxData).then(success, error);
     },
     /*
      * 取得local storage資料

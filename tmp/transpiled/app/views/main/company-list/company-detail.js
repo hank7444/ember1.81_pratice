@@ -1,10 +1,10 @@
-define("appkit/views/company-list", 
+define("appkit/views/main/company-list/company-detail", 
   ["appkit/views/container","exports"],
   function(__dependency1__, __exports__) {
     "use strict";
     var containerView = __dependency1__["default"];
 
-    var companyListView = containerView.extend({
+    var companyDetailView = containerView.extend({
         didInsertElement: function() {
     	    this._super(this);
     	},
@@ -13,5 +13,5 @@ define("appkit/views/company-list",
     	}
     });
 
-    __exports__["default"] = companyListView;
+    __exports__["default"] = companyDetailView;
   });

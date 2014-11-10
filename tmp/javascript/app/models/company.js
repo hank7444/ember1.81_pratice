@@ -32,13 +32,21 @@ CompanyModel.reopenClass({
 
     find: function(id) {
 
+
         var that = this;
 
-        return that.get('/company/' + id, null, null, null).then(function(res) {
-
+        var success = function() {
+            console.log('success2');
+            console.log(res);
             return CompanyModel.create(res);  
+        };
 
-        });
+        var error = function() {
+            console.log('error2');
+            return res;
+        };
+
+        return that.get('/company/' + id, null, 'json', null).then(success, error);
 
     },
 
@@ -79,6 +87,10 @@ CompanyModel.reopenClass({
         
             return data;  
 
+        }, function(data) {
+
+            console.log('error3!!!!');
+            return data;
         });
     },
 

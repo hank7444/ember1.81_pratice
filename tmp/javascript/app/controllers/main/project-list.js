@@ -292,7 +292,7 @@ var ProjectListController = Ember.ArrayController.extend({
                 console.log('上傳成功, 到controller了!')
 
                 // 畫面reload
-                that.transitionToRoute('projectList', ProjectModel.hash['currentPage']);
+                that.transitionToRoute('main.projectList', ProjectModel.hash['currentPage']);
 
                 // 顯示grow notifications
                 routeProxy.send('showGrowlNotifications', 'SUCCESS!', '專案營業人設定成功', 'success');
@@ -330,7 +330,7 @@ var ProjectListController = Ember.ArrayController.extend({
 
         // 點擊頁碼時
         changePage: function(page) {
-            this.transitionToRoute('projectList', page);
+            this.transitionToRoute('main.projectList', page);
         },
 
         // 根據搜尋條件拿取資料
@@ -348,7 +348,7 @@ var ProjectListController = Ember.ArrayController.extend({
             }
 
             cookieProxy.setCookie('projectData', projectDataCookie);
-            this.transitionToRoute('projectList', 1);
+            this.transitionToRoute('main.projectList', 1);
 
         },
 
@@ -356,7 +356,7 @@ var ProjectListController = Ember.ArrayController.extend({
         clear: function() {
 
             // ember很奇怪, 如果頁碼是''的話, 會帶入原本的頁碼並清除url上的頁碼
-            this.transitionToRoute('projectList', ' ');
+            this.transitionToRoute('main.projectList', ' ');
         }
      
     }

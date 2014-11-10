@@ -2,31 +2,34 @@ var Router = Ember.Router.extend();
 
 Router.map(function() {
 
-	this.resource('login', function() {
+	this.route('error'),
+	this.route('login', function() {
 
 	}),
-	this.resource('main', function() {
+	this.route('main', function() {
 
 		this.route('index');
 
 		// 營業人管理
-		this.resource('companyList', {path: '/company/:page_id'}, function() {
+		this.route('companyList', {path: '/company/:page_id'}, function() {
 
-			this.resource('companyDetail', {path: '/detail/:company_id'}, function() {
+
+			this.route('companyDetail', {path: '/detail/:company_id'}, function() {
 				
 			});
 
 		});
 
 		// 專案管理
-		this.resource('projectList', {path: '/project/:page_id'}, function() {
+		
+		this.route('projectList', {path: '/project/:page_id'}, function() {
 
 		});
 		
-	});
+	})
 
 	// 所有不存在的url, 都會到這個route來處理(404 not found);
-	//this.route('missing', { path: "/*path" });
+	this.route('missing', { path: "/*path" });
     
 });
 

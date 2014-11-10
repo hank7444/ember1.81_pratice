@@ -6,7 +6,7 @@
     {{/if}}
 
     {{#each page in pages}}
-        <li {{bind-attr class=page.class}}><a href="#" {{action changePage page.num}}{{page.num}}</a></li>
+        <li {{bind-attr class=page.class}}><a href="#" {{action changePage page.num}}>{{page.num}}</a></li>
     {{/each}}
 
 

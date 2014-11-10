@@ -22,13 +22,13 @@ module.exports = function(server) {
                 'account': 'hank_kuo@hiiir.com',
                 'name': 'hank',
             };
-
+            /*
             var resData = {
                 message: '帳號密碼錯誤！'
-            };
+            };*/
 
-            //res.send(resData);
-            res.status(500).send(resData);
+            res.send(resData);
+            //res.status(500).send(resData);
 
         });
 
@@ -54,16 +54,13 @@ module.exports = function(server) {
                 'pageSize': pageSize,
                 'company': paginatorOutput.outputData
             };
-
-            res.send(resData);
-
+            res.status(500).send(resData);
         });
 
         server.get('/company/1', function(req, res) {
 
             console.log('companyQuerySingle');
             console.log(req.query);
-
 
             var data = companyData[0];
 
@@ -82,6 +79,30 @@ module.exports = function(server) {
 
             res.send(resData);
 
+        });
+
+        server.get('/company/2', function(req, res) {
+
+            console.log('companyQuerySingle');
+            console.log(req.query);
+
+
+            var data = companyData[1];
+
+            var resData = {
+                companyId: data.companyId,
+                companyName: data.companyName,
+                registrationNo: data.registrationNo,
+                permitDate: data.permitDate,
+                permitWord: data.permitWord,
+                contactPersonEmail: data.contactPersonEmail,
+                auditStatus: data.auditStatus,
+                status: data.status,
+                hasProject: data.hasProject,
+                hasSoftwareCerf: data.hasSoftwareCerf
+            };
+
+            res.send(resData);
         });
 
         server.post('/company', function(req, res) {

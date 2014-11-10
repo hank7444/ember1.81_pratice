@@ -31,11 +31,11 @@ var ApplicationController = Ember.ObjectController.extend({
 
         return {
             msg: '儲存中',
-            isMask: false,
+            isMask: true,
             isShow: false,
             fadeInTime: 500,
             fadeOutTime: 500,
-            delayTime: 500
+            delayTime: 0
         };
 
     }.property(),

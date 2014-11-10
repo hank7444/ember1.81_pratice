@@ -5,6 +5,8 @@
 
 {{#bs-modal name="editCompanyModal" fade=true title=editCompanyModalTitle footerButtonsBinding="editCompanyModalButtons"}}
 
+
+
   {{#if companyErrorMsg}}
     {{bs-alert message="欄位未通過驗證，無法送出" type="danger" dismiss="false"}}
   {{/if}}
@@ -213,6 +215,41 @@
                     </thead>
 
                     <tbody>
+
+                    {{!-- 改用itemController的寫法 --}}
+                    {{#each item in controller}}
+                       <tr>
+                        <td>{{item.companyId}}</td>
+                        <td>{{item.companyName}}</td>
+                        <td>{{item.registrationNo}}</td>
+                        <td>{{item.permitDate}}</td>
+                        <td>{{item.permitWord}}</td>
+                        <td>{{item.contactPersonEmail}}</td>
+                        <td><span {{bind-attr class=":badge item.hasSoftwareCerfLabelClass"}}>{{item.hasSoftwareCerfMsg}}</span></td>
+                        <td><span {{bind-attr class=":badge item.auditStatusLabelClass"}}>{{item.auditStatusMsg}}</span></td>
+                        <td><span {{bind-attr class=":badge item.statusLabelClass"}}>{{item.statusMsg}}</span></td>
+                        <td>
+                          <div class='text-left'>
+                            <button class="btn btn-xs btn-primary" {{action editCompany item.companyId}}> 
+                            編輯 <i class="icon-edit"></i>
+                            </button>
+                            {{#if item.isDelete}}
+                            <button class="btn btn-xs btn-danger" {{action deleteConfirmModalForCompany item.companyId}}>
+                            刪除 <i class="icon-remove"></i>
+                            </button>
+                            {{/if}}
+
+                            {{#linkTo 'main.companyList.companyDetail' pageData.currentPage item.companyId class='btn btn-success btn-xs'}}
+                              詳細
+                            {{/linkTo}}
+                 
+                        
+                          </div>
+                        </td>
+                      </tr>
+                    {{/each}}
+
+                    {{!--
                     {{#each data in tableData}}
                       <tr>
                         <td>{{data.companyId}}</td>
@@ -235,7 +272,7 @@
                             </button>
                             {{/if}}
 
-                            {{#linkTo 'companyDetail' pageData.currentPage data.companyId class='btn btn-success btn-xs'}}
+                            {{#linkTo 'main.companyList.companyDetail' pageData.currentPage data.companyId class='btn btn-success btn-xs'}}
                               詳細
                             {{/linkTo}}
                  
@@ -244,6 +281,7 @@
                         </td>
                       </tr>
                     {{/each}}
+                    --}}
                     </tbody>
 
                   </table>

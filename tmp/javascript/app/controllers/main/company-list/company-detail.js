@@ -11,7 +11,7 @@ var companyDetailController = Ember.ObjectController.extend({
         back: function() {
 
             //window.history.back();
-            this.transitionToRoute('companyList', ' ');
+            this.transitionToRoute('main.companyList', ' ');
         }
 
     }

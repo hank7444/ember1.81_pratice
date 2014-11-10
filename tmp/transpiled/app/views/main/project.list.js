@@ -1,4 +1,4 @@
-define("appkit/views/project-list", 
+define("appkit/views/main/project.list", 
   ["appkit/views/container","exports"],
   function(__dependency1__, __exports__) {
     "use strict";

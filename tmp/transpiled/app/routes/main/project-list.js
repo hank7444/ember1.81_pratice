@@ -1,4 +1,4 @@
-define("appkit/routes/project-list", 
+define("appkit/routes/main/project-list", 
   ["appkit/utils/auth","appkit/utils/cookieProxy","appkit/models/project","exports"],
   function(__dependency1__, __dependency2__, __dependency3__, __exports__) {
     "use strict";
@@ -22,7 +22,7 @@ define("appkit/routes/project-list",
                 icon: 'icon-stop',
                 name: '另一個新的menu物件',
                 page: {
-                    href: 'companyList',
+                    href: 'main.companyList',
                     params: ' '
                 }
             };
@@ -39,9 +39,9 @@ define("appkit/routes/project-list",
     			cookieProxy.removeCookie('projectData');
     			params.page_id = 1;
 
-    			this.controllerFor('projectList').set('search', '');
-    			this.controllerFor('projectList').set('statisticListSelectedItem', 'all');
-    			this.transitionTo('projectList', 1);
+    			this.controllerFor('main.projectList').set('search', '');
+    			this.controllerFor('main.projectList').set('statisticListSelectedItem', 'all');
+    			this.transitionTo('main.projectList', 1);
     		}
 
     		var searchData = {

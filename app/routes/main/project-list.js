@@ -18,7 +18,7 @@ var ProjectListRoute = Ember.Route.extend({
             icon: 'icon-stop',
             name: '另一個新的menu物件',
             page: {
-                href: 'companyList',
+                href: 'main.companyList',
                 params: ' '
             }
         };
@@ -35,9 +35,9 @@ var ProjectListRoute = Ember.Route.extend({
 			cookieProxy.removeCookie('projectData');
 			params.page_id = 1;
 
-			this.controllerFor('projectList').set('search', '');
-			this.controllerFor('projectList').set('statisticListSelectedItem', 'all');
-			this.transitionTo('projectList', 1);
+			this.controllerFor('main.projectList').set('search', '');
+			this.controllerFor('main.projectList').set('statisticListSelectedItem', 'all');
+			this.transitionTo('main.projectList', 1);
 		}
 
 		var searchData = {

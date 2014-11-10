@@ -19,6 +19,12 @@ define("appkit/app",
         currentPath: '',
     });
 
+    Ember.RSVP.configure('onerror', function(e) {
+        console.log('######app RSVP onerror');
+        console.log(e.message); 
+        console.log(e.stack);
+    });
+
 
     // 當丟出錯誤時, 在這裡控制
     Ember.onerror = function(error) {

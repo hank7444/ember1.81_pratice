@@ -52,6 +52,12 @@ define("appkit/app",
         currentPath: '',
     });
 
+    Ember.RSVP.configure('onerror', function(e) {
+        console.log('######app RSVP onerror');
+        console.log(e.message); 
+        console.log(e.stack);
+    });
+
 
     // 當丟出錯誤時, 在這裡控制
     Ember.onerror = function(error) {
@@ -3906,11 +3912,11 @@ define("appkit/controllers/application",
 
             return {
                 msg: '儲存中',
-                isMask: false,
+                isMask: true,
                 isShow: false,
                 fadeInTime: 500,
                 fadeOutTime: 500,
-                delayTime: 500
+                delayTime: 0
             };
 
         }.property(),
@@ -3973,34 +3979,299 @@ define("appkit/controllers/application",
 
     __exports__["default"] = ApplicationController;
   });
-define("appkit/controllers/company-detail", 
-  ["appkit/models/company","appkit/utils/routeProxy","appkit/utils/cookieProxy","exports"],
-  function(__dependency1__, __dependency2__, __dependency3__, __exports__) {
+define("appkit/controllers/company", 
+  ["exports"],
+  function(__exports__) {
     "use strict";
-    var CompanyModel = __dependency1__["default"];
-    var routeProxy = __dependency2__["default"];
-    var cookieProxy = __dependency3__["default"];
+    var CompanyController = Ember.ObjectController.extend({
 
-    var companyDetailController = Ember.ObjectController.extend({
+      hasSoftwareCerfMsg: function() {
+        return this.get('hasSoftwareCerf') == 'Y' ? '已上傳' : '尚未上傳';
+      }.property(),
 
+      hasSoftwareCerfLabelClass: function() {
+      	return this.get('hasSoftwareCerf') == 'Y' ? 'badge-success' : 'badge-important';
+      }.property(),
 
-        actions: {
+      statusMsg: function() {
+      	return this.get('status') == 'Y' ? '啟用' : '停用';
+      }.property(),
 
-            // 新增資料
-            back: function() {
+      statusLabelClass: function() {
+      	return this.get('status') == 'Y' ? 'badge-success' : 'badge-important';
+      }.property(),
 
-                //window.history.back();
-                this.transitionToRoute('companyList', ' ');
+      auditStatusMsg: function() {
+      	return this.get('auditStatus') == 'pass' ? '審核通過' : '審核中';
+      }.property(),
+
+      auditStatusLabelClass: function() {
+      	return this.get('auditStatus') == 'pass' ? 'badge-success' : 'badge-important';
+      }.property(),
+
+      isDelete: function() {
+
+      		var isDelete = false;
+
+      		if (this.get('status') == 'N' && this.get('hasProject') == 'N') {
+            	isDelete = true;
             }
+            return isDelete;
+      }.property()
 
-        }
+    });
+
+    __exports__["default"] = CompanyController;
+  });
+define("appkit/controllers/error", 
+  ["exports"],
+  function(__exports__) {
+    "use strict";
+    var ErrorController = Ember.ObjectController.extend({
+
 
 
     });
 
-    __exports__["default"] = companyDetailController;
+    __exports__["default"] = ErrorController;
   });
-define("appkit/controllers/company-list", 
+define("appkit/controllers/login", 
+  ["appkit/models/login","appkit/utils/cookieProxy","appkit/utils/routeProxy","appkit/utils/auth","exports"],
+  function(__dependency1__, __dependency2__, __dependency3__, __dependency4__, __exports__) {
+    "use strict";
+    var Login = __dependency1__["default"];
+    var cookieProxy = __dependency2__["default"];
+    var routeProxy = __dependency3__["default"];
+    var auth = __dependency4__["default"];
+
+    var LoginController = Ember.ObjectController.extend({
+
+    	validateData: function() {
+
+    		return {
+
+    			options: {
+
+    				success:'valid',
+    		        errorElement:'span',
+    		        errorClass:'has-error',
+    		        validClass: '',
+
+    		   		highlight:function(element, errorClass, validClass) {
+
+    			        $(element).parents('.form-group').addClass('has-error');   
+    			    },
+    			    unhighlight:function(element, errorClass, validClass) {
+
+    			        $(element).parents('.form-group').removeClass('has-error');
+    			    },
+    		        errorPlacement: function(error, element) {
+
+    		            error.appendTo($(element.parent()).siblings('span'));
+    		        },
+    		        rules: {
+    		            'account': {
+    		                required: true,
+    		                //email: true
+    		            },
+    		            'password': {
+    		            	required: true,
+    		            	maxlength: 12,
+    		            	minlength: 6,
+    		            }
+    		        },
+    		        messages: {
+    		            'account': {
+    		                required: 'SSO帳號為必填',
+    		                //email: 'email格式錯誤'
+    		            },
+    		            'password': {
+    		            	required: '密碼為必填',
+    		            	maxlength: '密碼字數不可超過12字',
+    		            	minlength: '密碼字數不可少於6字',
+    		            }
+    		        }
+    		    }
+    		};
+    	}.property(),
+
+    	actions: {
+
+    		login: function() {
+
+    			console.log('trigger login!');
+
+    			var that = this;
+
+    			if ($(this.get('validateData.form')).valid()) {
+
+    				var success = function(res) {
+
+    					console.log('into success3');
+
+    					Em.run(function() {
+
+    						var minutes = 30;
+    						var expires = new Date();
+    						var member = {
+    							memberId: res.memberId,
+    							memberType: res.memberType,
+    							account: res.account,
+    							name: res.name
+    						};
+
+    						that.set('errorMsg', '');
+
+    						if (that.get('isRemember')) {
+    							minutes = 259200;
+    						} 
+    		
+    						expires.setTime(expires.getTime() + (minutes * 60 * 1000));
+
+
+    						// 設定cookie
+    						cookieProxy.setCookie('token', res.token, {expires: expires}, null, true);
+    						cookieProxy.setCookie('memberId', res.memberId, {expires: expires}, null, true);
+    						cookieProxy.setCookie('member', member, {expires: expires}, null, true);
+
+
+    						// 導頁到首頁
+    			            Ember.run.later(null, function() {
+    			            	auth.redirectForLogin();
+    		                }, 100);
+
+    		        	});
+    				};
+
+    				var error = function(res) {
+
+    					console.log('into error3');
+
+    					console.log(res);
+
+    					// sso壞掉, 寫死登入資訊
+    					/*
+    					var minutes = 259200;
+    					var expires = new Date();
+    					var member = {
+    						"memberId": "1",
+    					    "memberType": "0",
+    					    "account": "hank_kuo@hiiir.com",
+    					    "name": "hank",
+    					};
+
+    					expires.setTime(expires.getTime() + (minutes * 60 * 1000));
+
+    					$.cookie('token', 'R4hTnAug7ssT2GTrkyK36jY6OWhZ9ZmOkYn1xdFuua2s1pkiU-iUjkvXFYwjusXZw8C2nVNNZwbui9mbS-HGr6AaJSAgujfrb', {expires: expires});
+    			        $.cookie('member', JSON.stringify(member), {expires: expires});
+
+
+    			        that.transitionToRoute('main');
+
+    					*/
+
+    					// 如果ajax回來要做的事情要被測試, 就要用Em.run, 不然測試時會發生錯誤!
+    					Em.run(function() {
+    						console.log('login error');
+    						that.set('errorMsg', res.responseText.message); // 將錯誤訊息塞入, 不過不用就註解掉吧
+    					});
+    					
+    				};
+
+    				Login.login(that.get('account'), that.get('password')).then(success, error);
+    				
+
+    				//console.log('aaa: ' + aaa);
+    				//console.log(this.get('account'));
+    				//console.log(this.get('password'));
+    			}
+    			else {
+    				routeProxy.send('showNotification', '');
+    			}
+    		},
+    	}
+    });
+
+
+    __exports__["default"] = LoginController;
+  });
+define("appkit/controllers/main", 
+  ["appkit/utils/cookieProxy","appkit/utils/auth","appkit/utils/sidemenuData","exports"],
+  function(__dependency1__, __dependency2__, __dependency3__, __exports__) {
+    "use strict";
+    var cookieProxy = __dependency1__["default"];
+    var auth = __dependency2__["default"];
+    var sidemenuData = __dependency3__["default"];
+
+    var MainController = Ember.ObjectController.extend({
+
+
+    	menuData: function() {
+
+    		var member = cookieProxy.getCookie('member');
+
+    		return {
+
+    			title: '發票系統-管理者後台',
+    			titleLink: 'main.index',
+    			userName: member.name,
+    			userPhoto: 'assets/images/avatar.jpg',
+    			hasToggleBtn: true,
+    			hasUserMenu: true,
+    			userMenu: [
+                    {
+                        actionName: 'profile',
+                        icon: 'icon-user',
+                        title: 'Profile',
+                        hasDivider: true
+                    },
+    	            {
+    	                actionName: 'logout',
+    	                icon: 'icon-signout',
+    	                title: '登出'
+    	            }
+    			]
+    		};
+
+    	}.property(),
+
+
+    	sidemenuDataOrigin: function() {
+
+    		return sidemenuData;
+
+    	}.property(),
+
+    	sidemenuData: function() {
+
+            return sidemenuData;
+
+    	}.property('this.sidemenuData'),
+
+
+    	actions: {
+
+    		headerMenu: function(param) {
+
+    			switch (param) {
+
+    				case 'profile':
+    					this.transitionToRoute('main.profile');
+    					break;
+
+    				case 'logout':
+    					auth.redirectForLogout();
+    					break;
+    			}
+
+    			console.log(param);
+    		}
+    	}
+    });
+
+    __exports__["default"] = MainController;
+  });
+define("appkit/controllers/main/company-list", 
   ["appkit/models/company","appkit/utils/routeProxy","appkit/utils/cookieProxy","exports"],
   function(__dependency1__, __dependency2__, __dependency3__, __exports__) {
     "use strict";
@@ -4010,13 +4281,15 @@ define("appkit/controllers/company-list",
 
     var CompanyListController = Ember.ArrayController.extend({
 
+        itemController: 'company', // itemController的檔案要放在controlls/裡面, 放在controlls/的sub-folder都讀不到
+
         search: function() {
 
             return CompanyModel.hash['search'];
 
         }.property(),
 
-
+    /*
         tableData: function() {
 
             var data = this.get('model');
@@ -4040,7 +4313,7 @@ define("appkit/controllers/company-list",
             });
             return data;
 
-        }.property('this.model'),
+        }.property('this.model'),*/
 
 
         pageData: function() {
@@ -4288,7 +4561,7 @@ define("appkit/controllers/company-list",
                     console.log('上傳成功, 到controller了!')
 
                     // 畫面reload
-                    that.transitionToRoute('companyList', CompanyModel.hash['currentPage']);
+                    that.transitionToRoute('main.companyList', CompanyModel.hash['currentPage']);
 
                     // 顯示grow notifications
                     routeProxy.send('showGrowlNotifications', 'SUCCESS!', '營業人' + actionMsg +'成功', 'success');
@@ -4372,7 +4645,7 @@ define("appkit/controllers/company-list",
                 var success = function(res) {
 
                     // 畫面reload
-                    that.transitionToRoute('companyList', CompanyModel.hash['currentPage']);
+                    that.transitionToRoute('main.companyList', CompanyModel.hash['currentPage']);
 
                     // 顯示grow notifications
                     routeProxy.send('showGrowlNotifications', 'SUCCESS!', '營業人刪除成功', 'success');
@@ -4392,7 +4665,7 @@ define("appkit/controllers/company-list",
 
             // 點擊頁碼時
             changePage: function(page) {
-                this.transitionToRoute('companyList', page);
+                this.transitionToRoute('main.companyList', page);
             },
 
             // 根據搜尋條件拿取資料
@@ -4403,7 +4676,7 @@ define("appkit/controllers/company-list",
                 };
 
                 cookieProxy.setCookie('companyData', searchData);
-                this.transitionToRoute('companyList', 1);
+                this.transitionToRoute('main.companyList', 1);
 
             },
 
@@ -4411,7 +4684,7 @@ define("appkit/controllers/company-list",
             clear: function() {
 
                 // ember很奇怪, 如果頁碼是''的話, 會帶入原本的頁碼並清除url上的頁碼
-                this.transitionToRoute('companyList', ' ');
+                this.transitionToRoute('main.companyList', ' ');
             }
          
         }
@@ -4421,241 +4694,32 @@ define("appkit/controllers/company-list",
 
     __exports__["default"] = CompanyListController;
   });
-define("appkit/controllers/login", 
-  ["appkit/models/login","appkit/utils/cookieProxy","appkit/utils/routeProxy","appkit/utils/auth","exports"],
-  function(__dependency1__, __dependency2__, __dependency3__, __dependency4__, __exports__) {
-    "use strict";
-    var Login = __dependency1__["default"];
-    var cookieProxy = __dependency2__["default"];
-    var routeProxy = __dependency3__["default"];
-    var auth = __dependency4__["default"];
-
-    var LoginController = Ember.ObjectController.extend({
-
-    	validateData: function() {
-
-    		return {
-
-    			options: {
-
-    				success:'valid',
-    		        errorElement:'span',
-    		        errorClass:'has-error',
-    		        validClass: '',
-
-    		   		highlight:function(element, errorClass, validClass) {
-
-    			        $(element).parents('.form-group').addClass('has-error');   
-    			    },
-    			    unhighlight:function(element, errorClass, validClass) {
-
-    			        $(element).parents('.form-group').removeClass('has-error');
-    			    },
-    		        errorPlacement: function(error, element) {
-
-    		            error.appendTo($(element.parent()).siblings('span'));
-    		        },
-    		        rules: {
-    		            'account': {
-    		                required: true,
-    		                //email: true
-    		            },
-    		            'password': {
-    		            	required: true,
-    		            	maxlength: 12,
-    		            	minlength: 6,
-    		            }
-    		        },
-    		        messages: {
-    		            'account': {
-    		                required: 'SSO帳號為必填',
-    		                //email: 'email格式錯誤'
-    		            },
-    		            'password': {
-    		            	required: '密碼為必填',
-    		            	maxlength: '密碼字數不可超過12字',
-    		            	minlength: '密碼字數不可少於6字',
-    		            }
-    		        }
-    		    }
-    		};
-    	}.property(),
-
-    	actions: {
-
-    		login: function() {
-
-    			console.log('trigger login!');
-
-    			var that = this;
-
-    			if ($(this.get('validateData.form')).valid()) {
-
-    				var success = function(res) {
-
-    					console.log('into success3');
-
-    					Em.run(function() {
-
-    						var minutes = 30;
-    						var expires = new Date();
-    						var member = {
-    							memberId: res.memberId,
-    							memberType: res.memberType,
-    							account: res.account,
-    							name: res.name
-    						};
-
-    						that.set('errorMsg', '');
-
-    						if (that.get('isRemember')) {
-    							minutes = 259200;
-    						} 
-    		
-    						expires.setTime(expires.getTime() + (minutes * 60 * 1000));
-
-
-    						// 設定cookie
-    						cookieProxy.setCookie('token', res.token, {expires: expires}, null, true);
-    						cookieProxy.setCookie('memberId', res.memberId, {expires: expires}, null, true);
-    						cookieProxy.setCookie('member', member, {expires: expires}, null, true);
-
-
-    						// 導頁到首頁
-    			            Ember.run.later(null, function() {
-    			            	auth.redirectForLogin();
-    		                }, 100);
-
-    		        	});
-    				};
-
-    				var error = function(res) {
-
-    					console.log('into error3');
-
-    					console.log(res);
-
-    					// sso壞掉, 寫死登入資訊
-    					/*
-    					var minutes = 259200;
-    					var expires = new Date();
-    					var member = {
-    						"memberId": "1",
-    					    "memberType": "0",
-    					    "account": "hank_kuo@hiiir.com",
-    					    "name": "hank",
-    					};
-
-    					expires.setTime(expires.getTime() + (minutes * 60 * 1000));
-
-    					$.cookie('token', 'R4hTnAug7ssT2GTrkyK36jY6OWhZ9ZmOkYn1xdFuua2s1pkiU-iUjkvXFYwjusXZw8C2nVNNZwbui9mbS-HGr6AaJSAgujfrb', {expires: expires});
-    			        $.cookie('member', JSON.stringify(member), {expires: expires});
-
-
-    			        that.transitionToRoute('main');
-
-    					*/
-
-    					// 如果ajax回來要做的事情要被測試, 就要用Em.run, 不然測試時會發生錯誤!
-    					Em.run(function() {
-    						console.log('login error');
-    						that.set('errorMsg', res.responseText.message); // 將錯誤訊息塞入, 不過不用就註解掉吧
-    					});
-    					
-    				};
-
-    				Login.login(that.get('account'), that.get('password')).then(success, error);
-    				
-
-    				//console.log('aaa: ' + aaa);
-    				//console.log(this.get('account'));
-    				//console.log(this.get('password'));
-    			}
-    			else {
-    				routeProxy.send('showNotification', '');
-    			}
-    		},
-    	}
-    });
-
-
-    __exports__["default"] = LoginController;
-  });
-define("appkit/controllers/main", 
-  ["appkit/utils/cookieProxy","appkit/utils/auth","appkit/utils/sidemenuData","exports"],
+define("appkit/controllers/main/company-list/company-detail", 
+  ["appkit/models/company","appkit/utils/routeProxy","appkit/utils/cookieProxy","exports"],
   function(__dependency1__, __dependency2__, __dependency3__, __exports__) {
     "use strict";
-    var cookieProxy = __dependency1__["default"];
-    var auth = __dependency2__["default"];
-    var sidemenuData = __dependency3__["default"];
+    var CompanyModel = __dependency1__["default"];
+    var routeProxy = __dependency2__["default"];
+    var cookieProxy = __dependency3__["default"];
 
-    var MainController = Ember.ObjectController.extend({
-
-
-    	menuData: function() {
-
-    		var member = cookieProxy.getCookie('member');
-
-    		return {
-
-    			title: '發票系統-管理者後台',
-    			titleLink: 'main.index',
-    			userName: member.name,
-    			userPhoto: 'assets/images/avatar.jpg',
-    			hasToggleBtn: true,
-    			hasUserMenu: true,
-    			userMenu: [
-                    {
-                        actionName: 'profile',
-                        icon: 'icon-user',
-                        title: 'Profile',
-                        hasDivider: true
-                    },
-    	            {
-    	                actionName: 'logout',
-    	                icon: 'icon-signout',
-    	                title: '登出'
-    	            }
-    			]
-    		};
-
-    	}.property(),
+    var companyDetailController = Ember.ObjectController.extend({
 
 
-    	sidemenuDataOrigin: function() {
+        actions: {
 
-    		return sidemenuData;
+            // 新增資料
+            back: function() {
 
-    	}.property(),
+                //window.history.back();
+                this.transitionToRoute('main.companyList', ' ');
+            }
 
-    	sidemenuData: function() {
-
-            return sidemenuData;
-
-    	}.property('this.sidemenuData'),
+        }
 
 
-    	actions: {
-
-    		headerMenu: function(param) {
-
-    			switch (param) {
-
-    				case 'profile':
-    					this.transitionToRoute('main.profile');
-    					break;
-
-    				case 'logout':
-    					auth.redirectForLogout();
-    					break;
-    			}
-
-    			console.log(param);
-    		}
-    	}
     });
 
-    __exports__["default"] = MainController;
+    __exports__["default"] = companyDetailController;
   });
 define("appkit/controllers/main/index", 
   ["exports"],
@@ -4671,7 +4735,7 @@ define("appkit/controllers/main/index",
 
     __exports__["default"] = MainController;
   });
-define("appkit/controllers/project-list", 
+define("appkit/controllers/main/project-list", 
   ["appkit/models/project","appkit/utils/routeProxy","appkit/utils/cookieProxy","appkit/utils/globalObjFunc","exports"],
   function(__dependency1__, __dependency2__, __dependency3__, __dependency4__, __exports__) {
     "use strict";
@@ -4969,7 +5033,7 @@ define("appkit/controllers/project-list",
                     console.log('上傳成功, 到controller了!')
 
                     // 畫面reload
-                    that.transitionToRoute('projectList', ProjectModel.hash['currentPage']);
+                    that.transitionToRoute('main.projectList', ProjectModel.hash['currentPage']);
 
                     // 顯示grow notifications
                     routeProxy.send('showGrowlNotifications', 'SUCCESS!', '專案營業人設定成功', 'success');
@@ -5007,7 +5071,7 @@ define("appkit/controllers/project-list",
 
             // 點擊頁碼時
             changePage: function(page) {
-                this.transitionToRoute('projectList', page);
+                this.transitionToRoute('main.projectList', page);
             },
 
             // 根據搜尋條件拿取資料
@@ -5025,7 +5089,7 @@ define("appkit/controllers/project-list",
                 }
 
                 cookieProxy.setCookie('projectData', projectDataCookie);
-                this.transitionToRoute('projectList', 1);
+                this.transitionToRoute('main.projectList', 1);
 
             },
 
@@ -5033,7 +5097,7 @@ define("appkit/controllers/project-list",
             clear: function() {
 
                 // ember很奇怪, 如果頁碼是''的話, 會帶入原本的頁碼並清除url上的頁碼
-                this.transitionToRoute('projectList', ' ');
+                this.transitionToRoute('main.projectList', ' ');
             }
          
         }
@@ -5264,8 +5328,6 @@ define("appkit/models/base",
             }
 
 
-
-
             var url = params.url;
             var host = params.host || config.host.default;
             var dataType = params.dataType || 'json';
@@ -5311,40 +5373,42 @@ define("appkit/models/base",
                 ajaxData.contentType = 'application/json; charset=UTF-8';
                 ajaxData.data = JSON.stringify(ajaxData.data);
             }
+
+            console.log(ajaxData);
          
             /*
             不在base做error callback, 讓error bubble上去到要使用的controller或route中,
             如果在這邊return 任何值, 在往上會被當作success callback處理
             因此改用Ember.RSVP.Promise, 可將success or error的response一路往上拋到呼叫的進入點
+
+            新版已經沒有這個問題，所以RSVP.Promise跟ic.ajax就拿掉了
             */
-            return new Ember.RSVP.Promise(function(resolve, reject) {
 
-                var success = function(res) {
+            var success = function(res) {
 
-                    routeProxy.send('hideLoading');
+                routeProxy.send('hideLoading');
+                console.log('into success1');
 
-                    console.log('into success1');
+                res = parseResponseText(res);
+                return res;
+            };
 
-                    res = parseResponseText(res);
+            var error = function(res) {
 
-                    resolve(res);
-                };
+                routeProxy.send('hideLoading');
+                console.log('into error1');
 
-                var error = function(res) {
+                /*
+                // 如果有錯誤, 需要共同的onerror來接, 可以用RSVP來達成
+                // reject全部都會被RSVP.onerror來接
+                var deferred = Ember.RSVP.defer();
+                deferred.reject("End of the world");
+                */
 
-                    routeProxy.send('hideLoading');
-
-                    console.log('into error1');
-
-                    res = parseResponseText(res);
-
-                    reject(res);
-                };
-
-                Ember.run.later(null, function() {
-                    Ember.$.ajax(ajaxData).then(success, error);
-                }, 0);
-            });
+                res = parseResponseText(res);
+                return res;
+            };
+            return Ember.$.ajax(ajaxData).then(success, error);
         },
         /*
          * 取得local storage資料
@@ -5459,13 +5523,21 @@ define("appkit/models/company",
 
         find: function(id) {
 
+
             var that = this;
 
-            return that.get('/company/' + id, null, null, null).then(function(res) {
-
+            var success = function() {
+                console.log('success2');
+                console.log(res);
                 return CompanyModel.create(res);  
+            };
 
-            });
+            var error = function() {
+                console.log('error2');
+                return res;
+            };
+
+            return that.get('/company/' + id, null, 'json', null).then(success, error);
 
         },
 
@@ -5506,6 +5578,10 @@ define("appkit/models/company",
             
                 return data;  
 
+            }, function(data) {
+
+                console.log('error3!!!!');
+                return data;
             });
         },
 
@@ -6089,31 +6165,34 @@ define("appkit/router",
 
     Router.map(function() {
 
-    	this.resource('login', function() {
+    	this.route('error'),
+    	this.route('login', function() {
 
     	}),
-    	this.resource('main', function() {
+    	this.route('main', function() {
 
     		this.route('index');
 
     		// 營業人管理
-    		this.resource('companyList', {path: '/company/:page_id'}, function() {
+    		this.route('companyList', {path: '/company/:page_id'}, function() {
 
-    			this.resource('companyDetail', {path: '/detail/:company_id'}, function() {
+
+    			this.route('companyDetail', {path: '/detail/:company_id'}, function() {
     				
     			});
 
     		});
 
     		// 專案管理
-    		this.resource('projectList', {path: '/project/:page_id'}, function() {
+    		
+    		this.route('projectList', {path: '/project/:page_id'}, function() {
 
     		});
     		
-    	});
+    	})
 
     	// 所有不存在的url, 都會到這個route來處理(404 not found);
-    	//this.route('missing', { path: "/*path" });
+    	this.route('missing', { path: "/*path" });
         
     });
 
@@ -6144,95 +6223,6 @@ define("appkit/routes/application",
 
     __exports__["default"] = ApplicationRoute;
   });
-define("appkit/routes/company-detail", 
-  ["appkit/utils/auth","appkit/utils/cookieProxy","appkit/models/company","exports"],
-  function(__dependency1__, __dependency2__, __dependency3__, __exports__) {
-    "use strict";
-    var auth = __dependency1__["default"];
-    var cookieProxy = __dependency2__["default"];
-    var CompanyModel = __dependency3__["default"];
-
-    var companyDetailRoute = Ember.Route.extend({
-
-    	beforeModel: function(transition) {
-    		auth.loginChecking(transition, this);
-    	},
-    	model: function(params) {
-
-    		var that = this;
-
-    		return CompanyModel.find(params.company_id).then(function(data) {
-
-    			// sidemenu插入新項目, 要用Ember.copy()
-    			var menuItem = {
-    	            isPage: true,
-    	            isHidden: false,
-    	            icon: 'icon-group',
-    	            name: '新的menu物件',
-    	            page: {
-    	                href: 'companyList',
-    	                params: ' '
-    	            }
-    	        };
-
-    			var sidemenuData = that.controllerFor('main').get('sidemenuDataOrigin');
-    			sidemenuData = Ember.copy(sidemenuData, true);
-    			sidemenuData[0].page.push(menuItem);
-    			that.controllerFor('main').set('sidemenuData', sidemenuData);
-    		
-    		
-    			return data;
-    		});
-    	},
-    	actions: {
-
-    	}
-
-    });
-    __exports__["default"] = companyDetailRoute;
-  });
-define("appkit/routes/company-list", 
-  ["appkit/utils/auth","appkit/utils/cookieProxy","appkit/models/company","exports"],
-  function(__dependency1__, __dependency2__, __dependency3__, __exports__) {
-    "use strict";
-    var auth = __dependency1__["default"];
-    var cookieProxy = __dependency2__["default"];
-    var CompanyModel = __dependency3__["default"];
-
-    var CompanyListRoute = Ember.Route.extend({
-    	
-    	beforeModel: function(transition) {
-    		auth.loginChecking(transition, this);
-    	},
-    	model: function(params) {
-
-
-    		// 還原原始狀態, 不要用Ember.copy()
-    		var sidemenuData = this.controllerFor('main').get('sidemenuDataOrigin');
-    		this.controllerFor('main').set('sidemenuData', sidemenuData);
-    		
-
-
-    		if (params.page_id == ' ') {
-
-    			cookieProxy.removeCookie('companyData');
-    			params.page_id = 1;
-    			this.controllerFor('companyList').set('search', '');
-    			this.transitionTo('companyList', 1);
-    		}
-
-    		var searchData = {
-    			currentPage: params.page_id,
-    		};
-
-    		return CompanyModel.findByPage(searchData).then(function(data) {
-    			return data;
-    		});
-    	},
-
-    });
-    __exports__["default"] = CompanyListRoute;
-  });
 define("appkit/routes/error", 
   ["exports"],
   function(__exports__) {
@@ -6242,7 +6232,7 @@ define("appkit/routes/error",
 
     	init: function() {
     		console.log('ErrorRoute:' + error);
-    		alert(error);
+    		//alert(error);
     	},
 
     });
@@ -6309,6 +6299,109 @@ define("appkit/routes/main",
 
     __exports__["default"] = MainRoute;
   });
+define("appkit/routes/main/company-list", 
+  ["appkit/utils/auth","appkit/utils/cookieProxy","appkit/models/company","exports"],
+  function(__dependency1__, __dependency2__, __dependency3__, __exports__) {
+    "use strict";
+    var auth = __dependency1__["default"];
+    var cookieProxy = __dependency2__["default"];
+    var CompanyModel = __dependency3__["default"];
+
+    var CompanyListRoute = Ember.Route.extend({
+    	
+    	beforeModel: function(transition) {
+    		auth.loginChecking(transition, this);
+    	},
+    	model: function(params) {
+
+
+    		// 還原原始狀態, 不要用Ember.copy()
+    		var sidemenuData = this.controllerFor('main').get('sidemenuDataOrigin');
+    		this.controllerFor('main').set('sidemenuData', sidemenuData);
+    		
+
+
+    		if (params.page_id == ' ') {
+
+    			cookieProxy.removeCookie('companyData');
+    			params.page_id = 1;
+    			this.controllerFor('main.companyList').set('search', '');
+    			this.transitionTo('main.companyList', 1);
+    		}
+
+    		var searchData = {
+    			currentPage: params.page_id,
+    		};
+
+    		var success = function(data) {
+    			console.log('success3');
+    			return data;
+    		};
+    /*
+    		var error = function(data) {
+    			console.log('error3');
+    			console.log(data);
+    			return data;
+    		};*/
+
+    		return CompanyModel.findByPage(searchData).then(success);
+    	},
+
+    });
+    __exports__["default"] = CompanyListRoute;
+  });
+define("appkit/routes/main/company-list/company-detail", 
+  ["appkit/utils/auth","appkit/utils/cookieProxy","appkit/models/company","exports"],
+  function(__dependency1__, __dependency2__, __dependency3__, __exports__) {
+    "use strict";
+    var auth = __dependency1__["default"];
+    var cookieProxy = __dependency2__["default"];
+    var CompanyModel = __dependency3__["default"];
+
+    var companyDetailRoute = Ember.Route.extend({
+
+    	beforeModel: function(transition) {
+    		auth.loginChecking(transition, this);
+    	},
+    	model: function(params) {
+
+    		console.log('#########');
+    		console.log(params);
+
+    		var that = this;
+
+    		return CompanyModel.find(params.company_id).then(function(data) {
+
+    			// sidemenu插入新項目, 要用Ember.copy()
+    			/*
+    			var menuItem = {
+    	            isPage: true,
+    	            isHidden: false,
+    	            icon: 'icon-group',
+    	            name: '新的menu物件',
+    	            page: {
+    	                href: 'main.companyList',
+    	                params: ' '
+    	            }
+    	        };
+
+    			var sidemenuData = that.controllerFor('main').get('sidemenuDataOrigin');
+    			sidemenuData = Ember.copy(sidemenuData, true);
+    			sidemenuData[0].page.push(menuItem);
+    			that.controllerFor('main').set('sidemenuData', sidemenuData);
+    			*/
+    		
+    		
+    			return data;
+    		});
+    	},
+    	actions: {
+
+    	}
+
+    });
+    __exports__["default"] = companyDetailRoute;
+  });
 define("appkit/routes/main/index", 
   ["appkit/utils/auth","exports"],
   function(__dependency1__, __exports__) {
@@ -6320,7 +6413,7 @@ define("appkit/routes/main/index",
 
     	// 一進網站就從 / redirect 到想要的初始位置
     	beforeModel: function(transition) {
-    		//auth.loginChecking(transition, this, false);
+    		auth.loginChecking(transition, this, false);
     	},
 
     	model: function(params) {
@@ -6333,25 +6426,7 @@ define("appkit/routes/main/index",
 
     __exports__["default"] = MainIndexRoute;
   });
-define("appkit/routes/missing", 
-  ["appkit/utils/auth","exports"],
-  function(__dependency1__, __exports__) {
-    "use strict";
-    var auth = __dependency1__["default"];
-
-    var MissingRoute = Ember.Route.extend({
-
-    	beforeModel: function(transition) {
-
-    		console.log('into missing route, 404 page!');
-    		auth.redirectForLogin();	
-    	}
-
-    });
-
-    __exports__["default"] = MissingRoute;
-  });
-define("appkit/routes/project-list", 
+define("appkit/routes/main/project-list", 
   ["appkit/utils/auth","appkit/utils/cookieProxy","appkit/models/project","exports"],
   function(__dependency1__, __dependency2__, __dependency3__, __exports__) {
     "use strict";
@@ -6375,7 +6450,7 @@ define("appkit/routes/project-list",
                 icon: 'icon-stop',
                 name: '另一個新的menu物件',
                 page: {
-                    href: 'companyList',
+                    href: 'main.companyList',
                     params: ' '
                 }
             };
@@ -6392,9 +6467,9 @@ define("appkit/routes/project-list",
     			cookieProxy.removeCookie('projectData');
     			params.page_id = 1;
 
-    			this.controllerFor('projectList').set('search', '');
-    			this.controllerFor('projectList').set('statisticListSelectedItem', 'all');
-    			this.transitionTo('projectList', 1);
+    			this.controllerFor('main.projectList').set('search', '');
+    			this.controllerFor('main.projectList').set('statisticListSelectedItem', 'all');
+    			this.transitionTo('main.projectList', 1);
     		}
 
     		var searchData = {
@@ -6411,6 +6486,24 @@ define("appkit/routes/project-list",
 
     });
     __exports__["default"] = ProjectListRoute;
+  });
+define("appkit/routes/missing", 
+  ["appkit/utils/auth","exports"],
+  function(__dependency1__, __exports__) {
+    "use strict";
+    var auth = __dependency1__["default"];
+
+    var MissingRoute = Ember.Route.extend({
+
+    	beforeModel: function(transition) {
+
+    		console.log('into missing route, 404 page!');
+    		auth.redirectForLogin();	
+    	}
+
+    });
+
+    __exports__["default"] = MissingRoute;
   });
 define("appkit/serializers/application", 
   ["exports"],
@@ -6967,7 +7060,7 @@ define("appkit/utils/sidemenuData",
                     icon: 'icon-table',
                     name: '營業人資料列表',
                     page: {
-                        href: 'companyList',
+                        href: 'main.companyList',
                         params: ' '
                     } 
                 },
@@ -6976,7 +7069,7 @@ define("appkit/utils/sidemenuData",
                     icon: 'icon-table',
                     name: '專案營業人設定',
                     page: {
-                        href: 'projectList',
+                        href: 'main.projectList',
                         params: ' '
                     } 
                 }
@@ -7003,7 +7096,7 @@ define("appkit/utils/sidemenuData",
     		                icon: 'icon-table',
     		                name: '測試menu layer3-1',
     		                page: {
-    		                    href: 'companyList',
+    		                    href: '',
     		                    params: ' '
     		                } 
     		            },
@@ -7018,7 +7111,7 @@ define("appkit/utils/sidemenuData",
     				                icon: 'icon-table',
     				                name: '測試menu layer4-1',
     				                page: {
-    				                    href: 'companyList',
+    				                    href: '',
     				                    params: ' '
     				                } 
     				            },
@@ -7032,7 +7125,7 @@ define("appkit/utils/sidemenuData",
     				                icon: 'icon-table',
     				                name: '測試menu layer4-1',
     				                page: {
-    				                    href: 'companyList',
+    				                    href: '',
     				                    params: ' '
     				                } 
     				            },
@@ -7047,40 +7140,6 @@ define("appkit/utils/sidemenuData",
     ];
 
     __exports__["default"] = sidemenuData;
-  });
-define("appkit/views/company-detail", 
-  ["appkit/views/container","exports"],
-  function(__dependency1__, __exports__) {
-    "use strict";
-    var containerView = __dependency1__["default"];
-
-    var companyDetailView = containerView.extend({
-        didInsertElement: function() {
-    	    this._super(this);
-    	},
-    	willDestroyElement: function() {
-    		this._super(this);
-    	}
-    });
-
-    __exports__["default"] = companyDetailView;
-  });
-define("appkit/views/company-list", 
-  ["appkit/views/container","exports"],
-  function(__dependency1__, __exports__) {
-    "use strict";
-    var containerView = __dependency1__["default"];
-
-    var companyListView = containerView.extend({
-        didInsertElement: function() {
-    	    this._super(this);
-    	},
-    	willDestroyElement: function() {
-    		this._super(this);
-    	}
-    });
-
-    __exports__["default"] = companyListView;
   });
 define("appkit/views/container", 
   ["exports"],
@@ -7582,6 +7641,40 @@ define("appkit/views/main",
 
     __exports__["default"] = main;
   });
+define("appkit/views/main/company-list", 
+  ["appkit/views/container","exports"],
+  function(__dependency1__, __exports__) {
+    "use strict";
+    var containerView = __dependency1__["default"];
+
+    var companyListView = containerView.extend({
+        didInsertElement: function() {
+    	    this._super(this);
+    	},
+    	willDestroyElement: function() {
+    		this._super(this);
+    	}
+    });
+
+    __exports__["default"] = companyListView;
+  });
+define("appkit/views/main/company-list/company-detail", 
+  ["appkit/views/container","exports"],
+  function(__dependency1__, __exports__) {
+    "use strict";
+    var containerView = __dependency1__["default"];
+
+    var companyDetailView = containerView.extend({
+        didInsertElement: function() {
+    	    this._super(this);
+    	},
+    	willDestroyElement: function() {
+    		this._super(this);
+    	}
+    });
+
+    __exports__["default"] = companyDetailView;
+  });
 define("appkit/views/main/index", 
   ["appkit/views/fadeView","exports"],
   function(__dependency1__, __exports__) {
@@ -7598,7 +7691,7 @@ define("appkit/views/main/index",
 
     __exports__["default"] = index;
   });
-define("appkit/views/project-list", 
+define("appkit/views/main/project.list", 
   ["appkit/views/container","exports"],
   function(__dependency1__, __exports__) {
     "use strict";

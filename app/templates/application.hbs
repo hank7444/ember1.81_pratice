@@ -1,14 +1,15 @@
 
 {{bs-growl-notifications}}
 
+{{lightbox-loading options=loadingData}}
+
+
 {{outlet}}
 
 {{bs-notifications showTime="2000" fadeOutTime="300"  style="z-index: 1000; position: fixed; width: 50%; left: 0; right: 0; top: 0px; margin-left: auto; margin-right: auto; margin-top: 50px;"}}
 
-{{!--
-{{#bs-modal name="loginModal" fade="true" title="" footerButtonsBinding="loginModalButton"}}
+
+{{#bs-modal name="loginModal" fade=true title="1234" footerButtonsBinding="loginModalButton"}}
         {{loginModalMessage}}
 {{/bs-modal}}
---}}
 
-{{lightbox-loading options=loadingData}}

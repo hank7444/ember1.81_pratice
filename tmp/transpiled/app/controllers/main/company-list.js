@@ -1,4 +1,4 @@
-define("appkit/controllers/company-list", 
+define("appkit/controllers/main/company-list", 
   ["appkit/models/company","appkit/utils/routeProxy","appkit/utils/cookieProxy","exports"],
   function(__dependency1__, __dependency2__, __dependency3__, __exports__) {
     "use strict";
@@ -8,13 +8,15 @@ define("appkit/controllers/company-list",
 
     var CompanyListController = Ember.ArrayController.extend({
 
+        itemController: 'company', // itemController的檔案要放在controlls/裡面, 放在controlls/的sub-folder都讀不到
+
         search: function() {
 
             return CompanyModel.hash['search'];
 
         }.property(),
 
-
+    /*
         tableData: function() {
 
             var data = this.get('model');
@@ -38,7 +40,7 @@ define("appkit/controllers/company-list",
             });
             return data;
 
-        }.property('this.model'),
+        }.property('this.model'),*/
 
 
         pageData: function() {
@@ -286,7 +288,7 @@ define("appkit/controllers/company-list",
                     console.log('上傳成功, 到controller了!')
 
                     // 畫面reload
-                    that.transitionToRoute('companyList', CompanyModel.hash['currentPage']);
+                    that.transitionToRoute('main.companyList', CompanyModel.hash['currentPage']);
 
                     // 顯示grow notifications
                     routeProxy.send('showGrowlNotifications', 'SUCCESS!', '營業人' + actionMsg +'成功', 'success');
@@ -370,7 +372,7 @@ define("appkit/controllers/company-list",
                 var success = function(res) {
 
                     // 畫面reload
-                    that.transitionToRoute('companyList', CompanyModel.hash['currentPage']);
+                    that.transitionToRoute('main.companyList', CompanyModel.hash['currentPage']);
 
                     // 顯示grow notifications
                     routeProxy.send('showGrowlNotifications', 'SUCCESS!', '營業人刪除成功', 'success');
@@ -390,7 +392,7 @@ define("appkit/controllers/company-list",
 
             // 點擊頁碼時
             changePage: function(page) {
-                this.transitionToRoute('companyList', page);
+                this.transitionToRoute('main.companyList', page);
             },
 
             // 根據搜尋條件拿取資料
@@ -401,7 +403,7 @@ define("appkit/controllers/company-list",
                 };
 
                 cookieProxy.setCookie('companyData', searchData);
-                this.transitionToRoute('companyList', 1);
+                this.transitionToRoute('main.companyList', 1);
 
             },
 
@@ -409,7 +411,7 @@ define("appkit/controllers/company-list",
             clear: function() {
 
                 // ember很奇怪, 如果頁碼是''的話, 會帶入原本的頁碼並清除url上的頁碼
-                this.transitionToRoute('companyList', ' ');
+                this.transitionToRoute('main.companyList', ' ');
             }
          
         }
