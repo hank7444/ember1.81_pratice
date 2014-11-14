@@ -12,11 +12,12 @@ var CompanyListController = Ember.ArrayController.extend({
 
     }.property(),
 
-/*
+
     tableData: function() {
 
         var data = this.get('model');
 
+/*
         data.forEach(function(item) {
 
             item['hasSoftwareCerfMsg'] = item.hasSoftwareCerf == 'Y' ? '已上傳' : '尚未上傳';
@@ -33,10 +34,10 @@ var CompanyListController = Ember.ArrayController.extend({
                 item['isDelete'] = true;
             }
              
-        });
+        });*/
         return data;
 
-    }.property('this.model'),*/
+    }.property('this.model'),
 
 
     pageData: function() {

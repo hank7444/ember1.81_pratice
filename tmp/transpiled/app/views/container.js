@@ -15,7 +15,7 @@ define("appkit/views/container",
 
     	viewsAry.forEach(function(value, key) {
     		
-    		if (value.state == 'destroying') {
+    		if (value._state == 'destroying') {
     			console.log('&&&&&: ' + key);
     			viewsAry.splice(key, 1);
     		}

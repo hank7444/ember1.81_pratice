@@ -230,18 +230,18 @@
                         <td><span {{bind-attr class=":badge item.statusLabelClass"}}>{{item.statusMsg}}</span></td>
                         <td>
                           <div class='text-left'>
-                            <button class="btn btn-xs btn-primary" {{action editCompany item.companyId}}> 
+                            <button class="btn btn-xs btn-primary" {{action "editCompany" item.companyId}}> 
                             編輯 <i class="icon-edit"></i>
                             </button>
                             {{#if item.isDelete}}
-                            <button class="btn btn-xs btn-danger" {{action deleteConfirmModalForCompany item.companyId}}>
+                            <button class="btn btn-xs btn-danger" {{action "deleteConfirmModalForCompany" item.companyId}}>
                             刪除 <i class="icon-remove"></i>
                             </button>
                             {{/if}}
 
-                            {{#linkTo 'main.companyList.companyDetail' pageData.currentPage item.companyId class='btn btn-success btn-xs'}}
+                            {{#link-to 'main.companyList.companyDetail' pageData.currentPage item.companyId class='btn btn-success btn-xs'}}
                               詳細
-                            {{/linkTo}}
+                            {{/link-to}}
                  
                         
                           </div>

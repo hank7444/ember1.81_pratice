@@ -1,11 +1,12 @@
 define("appkit/app", 
-  ["resolver","appkit/models/base","appkit/utils/routeProxy","exports"],
-  function(__dependency1__, __dependency2__, __dependency3__, __exports__) {
+  ["resolver","appkit/models/base","appkit/utils/routeProxy","ember/load-initializers","exports"],
+  function(__dependency1__, __dependency2__, __dependency3__, __dependency4__, __exports__) {
     "use strict";
     var Resolver = __dependency1__["default"];
     //import registerComponents from 'appkit/utils/register_components';
     var Storage = __dependency2__["default"];
     var routeProxy = __dependency3__["default"];
+    var loadInitializers = __dependency4__["default"];
 
 
     var App = Ember.Application.extend({
@@ -131,6 +132,9 @@ define("appkit/app",
         }
     });
 
+    // 用ember/load-initializers來做initialize
+    // 會將initializers/資料夾內的js都跑過
+    loadInitializers(App, 'appkit');
 
     __exports__["default"] = App;
   });

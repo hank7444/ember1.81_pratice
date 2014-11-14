@@ -97,6 +97,11 @@
             </div>
           </div>
 
+          {{!- 不需要用selectionBinding, 直接用selection將值塞入即可 --}}
+          {{#view "viewtest" data-name="1234" book-id="aaa" selection="bbb"}}
+            12341234
+          {{/view}}
+
         </div>
       </div>
     </div>

@@ -1,8 +1,9 @@
 define("appkit/views/main/index", 
-  ["appkit/views/fadeView","exports"],
-  function(__dependency1__, __exports__) {
+  ["exports"],
+  function(__exports__) {
     "use strict";
-    var fadeView = __dependency1__["default"];
+    /*
+    import fadeView from 'appkit/views/fadeView';
 
 
     var index = fadeView.extend({
@@ -10,6 +11,20 @@ define("appkit/views/main/index",
         didInsertElement: function() {
             this._super();
         }
+    });
+
+    export default index;*/
+
+
+
+    // 如果有建view, 就要指定tagName為何, 不然會ember惠預設為div 
+    var index = Ember.View.extend({  
+    	didInsertElement: function() {
+    	    
+    	},
+    	willDestroyElement: function() {
+    		
+    	}
     });
 
     __exports__["default"] = index;

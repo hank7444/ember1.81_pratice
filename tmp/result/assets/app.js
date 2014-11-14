@@ -32,13 +32,14 @@ define("appkit/adapters/application",
     __exports__["default"] = adapter;
   });
 define("appkit/app", 
-  ["resolver","appkit/models/base","appkit/utils/routeProxy","exports"],
-  function(__dependency1__, __dependency2__, __dependency3__, __exports__) {
+  ["resolver","appkit/models/base","appkit/utils/routeProxy","ember/load-initializers","exports"],
+  function(__dependency1__, __dependency2__, __dependency3__, __dependency4__, __exports__) {
     "use strict";
     var Resolver = __dependency1__["default"];
     //import registerComponents from 'appkit/utils/register_components';
     var Storage = __dependency2__["default"];
     var routeProxy = __dependency3__["default"];
+    var loadInitializers = __dependency4__["default"];
 
 
     var App = Ember.Application.extend({
@@ -164,6 +165,9 @@ define("appkit/app",
         }
     });
 
+    // 用ember/load-initializers來做initialize
+    // 會將initializers/資料夾內的js都跑過
+    loadInitializers(App, 'appkit');
 
     __exports__["default"] = App;
   });
@@ -4097,6 +4101,11 @@ define("appkit/controllers/login",
 
     	actions: {
 
+    		fromView: function(param1, param2) {
+    			console.log('###$@@@@ fromView is triggered!');
+    			console.log(param1);
+    			console.log(param2);
+    		},
     		login: function() {
 
     			console.log('trigger login!');
@@ -4271,6 +4280,33 @@ define("appkit/controllers/main",
 
     __exports__["default"] = MainController;
   });
+define("appkit/controllers/main/company-detail2", 
+  ["appkit/models/company","appkit/utils/routeProxy","appkit/utils/cookieProxy","exports"],
+  function(__dependency1__, __dependency2__, __dependency3__, __exports__) {
+    "use strict";
+    var CompanyModel = __dependency1__["default"];
+    var routeProxy = __dependency2__["default"];
+    var cookieProxy = __dependency3__["default"];
+
+    var companyDetail2Controller = Ember.ObjectController.extend({
+
+
+        actions: {
+
+            // 新增資料
+            back: function() {
+
+                //window.history.back();
+                this.transitionToRoute('main.companyList2', ' ');
+            }
+
+        }
+
+
+    });
+
+    __exports__["default"] = companyDetail2Controller;
+  });
 define("appkit/controllers/main/company-list", 
   ["appkit/models/company","appkit/utils/routeProxy","appkit/utils/cookieProxy","exports"],
   function(__dependency1__, __dependency2__, __dependency3__, __exports__) {
@@ -4289,11 +4325,12 @@ define("appkit/controllers/main/company-list",
 
         }.property(),
 
-    /*
+
         tableData: function() {
 
             var data = this.get('model');
 
+    /*
             data.forEach(function(item) {
 
                 item['hasSoftwareCerfMsg'] = item.hasSoftwareCerf == 'Y' ? '已上傳' : '尚未上傳';
@@ -4310,10 +4347,10 @@ define("appkit/controllers/main/company-list",
                     item['isDelete'] = true;
                 }
                  
-            });
+            });*/
             return data;
 
-        }.property('this.model'),*/
+        }.property('this.model'),
 
 
         pageData: function() {
@@ -4721,6 +4758,70 @@ define("appkit/controllers/main/company-list/company-detail",
 
     __exports__["default"] = companyDetailController;
   });
+define("appkit/controllers/main/company-list2", 
+  ["appkit/models/company","appkit/utils/routeProxy","appkit/utils/cookieProxy","exports"],
+  function(__dependency1__, __dependency2__, __dependency3__, __exports__) {
+    "use strict";
+    var CompanyModel = __dependency1__["default"];
+    var routeProxy = __dependency2__["default"];
+    var cookieProxy = __dependency3__["default"];
+
+    var CompanyList2Controller = Ember.ArrayController.extend({
+
+        pageData: function() {
+
+            return {
+                currentPage: CompanyModel.hash['currentPage'],
+                totalPage: CompanyModel.hash['totalPage'],
+                pageSize: CompanyModel.hash['pageSize']
+            };
+
+        }.property('this.model'),
+
+        actions: {
+
+            // 點擊頁碼時
+            changePage: function(page) {
+                this.transitionToRoute('main.companyList2', page);
+            },
+        }
+    });
+    __exports__["default"] = CompanyList2Controller;
+  });
+define("appkit/controllers/main/company-list2/company-item", 
+  ["appkit/models/company","exports"],
+  function(__dependency1__, __exports__) {
+    "use strict";
+    var CompanyModel = __dependency1__["default"];
+
+    var CompanyItemController = Ember.ObjectController.extend({
+
+        item: function() {
+
+            var data = this.get('model');
+
+            data['hasSoftwareCerfMsg'] = data.hasSoftwareCerf == 'Y' ? '已上傳' : '尚未上傳';
+            data['hasSoftwareCerfLabelClass'] = data.hasSoftwareCerf == 'Y' ? 'badge-success' : 'badge-important';
+
+            data['statusMsg'] = data.status == 'Y' ? '啟用' : '停用';
+            data['statusLabelClass'] = data.status == 'Y' ? 'badge-success' : 'badge-important';
+            data['auditStatusMsg'] = data.auditStatus == 'pass' ? '審核通過' : '審核中';
+            data['auditStatusLabelClass'] = data.auditStatus == 'pass' ? 'badge-success' : 'badge-important';
+            
+            data['isDelete'] = false;
+
+            if (data['status'] == 'N' && data['hasProject'] == 'N') {
+                data['isDelete'] = true;
+            }
+
+            data['currentPage'] = CompanyModel.hash['currentPage'];
+            return data;
+
+        }.property('this.model'),
+
+    });
+    __exports__["default"] = CompanyItemController;
+  });
 define("appkit/controllers/main/index", 
   ["exports"],
   function(__exports__) {
@@ -4757,8 +4858,9 @@ define("appkit/controllers/main/project-list",
 
             var data = this.get('model');
 
-            data.forEach(function(item) {
+            data.forEach(function(item, index) {
 
+                item['index'] = index;
                 item['statusMsg'] = item.status == 'Y' ? '啟用' : '停用';
                 item['statusLabelClass'] = item.status == 'Y' ? 'badge-success' : 'badge-important';
                 item['consoleStatusMsg'] = item.consoleStatus == 'enable' ? '開啟' : item.consoleStatus == 'disable' ? '關閉' : '刪除';
@@ -4918,6 +5020,11 @@ define("appkit/controllers/main/project-list",
 
         actions: {
 
+            // 改變時會去觸發view有observers myId的function
+            triggerView: function(id) {
+                console.log('#####id: ' + id);
+                this.set('myId', id);
+            },
 
             // 開啟編輯頁面
             editProject: function(id) {
@@ -5105,6 +5212,49 @@ define("appkit/controllers/main/project-list",
     });
 
     __exports__["default"] = ProjectListController;
+  });
+define("appkit/initializers/inject-store-into-components", 
+  ["exports"],
+  function(__exports__) {
+    "use strict";
+    __exports__["default"] = {
+      name: "injectStoreIntoComponent",
+
+      initialize: function(container, application) {
+
+      	console.log('###init liquidFire');
+
+    	LiquidFire.map(function(){
+          this.transition(
+            this.fromRoute('main.index'),
+            this.toRoute('main.companyList2'),
+            this.use('toLeft'),
+            this.reverse('toRight')
+          );
+          this.transition(
+            this.fromRoute('main.companyList2'),
+            this.toRoute('main.companyDetail2'),
+            this.use('toLeft'),
+            this.reverse('toRight')
+          );
+        });
+      }
+    };
+  });
+define("appkit/initializers/testinit", 
+  ["exports"],
+  function(__exports__) {
+    "use strict";
+    __exports__["default"] = {
+      name: "testinit",
+
+      initialize: function(container, application) {
+
+      	console.log('###init testinit');
+
+
+      }
+    };
   });
 define("appkit/models/base", 
   ["appkit/utils/cookieProxy","appkit/utils/routeProxy","exports"],
@@ -5526,13 +5676,13 @@ define("appkit/models/company",
 
             var that = this;
 
-            var success = function() {
+            var success = function(res) {
                 console.log('success2');
                 console.log(res);
                 return CompanyModel.create(res);  
             };
 
-            var error = function() {
+            var error = function(res) {
                 console.log('error2');
                 return res;
             };
@@ -6169,6 +6319,9 @@ define("appkit/router",
     	this.route('login', function() {
 
     	}),
+
+    	// 1.8版的ember可以不用resource, 直接用route就可以做nested route了, 這樣頁面與資料夾結構好多了,
+    	// 不會像用resouce會要在folder第一層設定, 有助對整個網站結構的認識
     	this.route('main', function() {
 
     		this.route('index');
@@ -6183,8 +6336,16 @@ define("appkit/router",
 
     		});
 
+    		// 測試用
+    		this.route('companyList2', {path: '/company2/:page_id'}, function() {
+
+    		});
+
+    		this.route('companyDetail2', {path: '/detail2/:company_id'}, function() {
+    			
+    		});
+
     		// 專案管理
-    		
     		this.route('projectList', {path: '/project/:page_id'}, function() {
 
     		});
@@ -6192,7 +6353,7 @@ define("appkit/router",
     	})
 
     	// 所有不存在的url, 都會到這個route來處理(404 not found);
-    	this.route('missing', { path: "/*path" });
+    	//this.route('missing', { path: "/*path" });
         
     });
 
@@ -6274,6 +6435,13 @@ define("appkit/routes/login",
     	model: function() {
 
     		return Login.create();
+    	},
+    	actions:  { // 如果controller沒設相對應的action, 就會一路來到route這裡
+    		fromView: function(param1, param2) {
+    			console.log('route action trigger!!')
+    			console.log(param1);
+    			console.log(param2);
+    		}
     	}
 
     });
@@ -6298,6 +6466,58 @@ define("appkit/routes/main",
     });
 
     __exports__["default"] = MainRoute;
+  });
+define("appkit/routes/main/company-detail2", 
+  ["appkit/utils/auth","appkit/utils/cookieProxy","appkit/models/company","exports"],
+  function(__dependency1__, __dependency2__, __dependency3__, __exports__) {
+    "use strict";
+    var auth = __dependency1__["default"];
+    var cookieProxy = __dependency2__["default"];
+    var CompanyModel = __dependency3__["default"];
+
+    var companyDetail2Route = Ember.Route.extend({
+
+    	beforeModel: function(transition) {
+    		auth.loginChecking(transition, this);
+    	},
+    	model: function(params) {
+
+    		console.log('#########');
+    		console.log(params);
+
+    		var that = this;
+
+    		return CompanyModel.find(params.company_id).then(function(data) {
+
+    			// sidemenu插入新項目, 要用Ember.copy()
+    			/*
+    			var menuItem = {
+    	            isPage: true,
+    	            isHidden: false,
+    	            icon: 'icon-group',
+    	            name: '新的menu物件',
+    	            page: {
+    	                href: 'main.companyList',
+    	                params: ' '
+    	            }
+    	        };
+
+    			var sidemenuData = that.controllerFor('main').get('sidemenuDataOrigin');
+    			sidemenuData = Ember.copy(sidemenuData, true);
+    			sidemenuData[0].page.push(menuItem);
+    			that.controllerFor('main').set('sidemenuData', sidemenuData);
+    			*/
+    		
+    		
+    			return data;
+    		});
+    	},
+    	actions: {
+
+    	}
+
+    });
+    __exports__["default"] = companyDetail2Route;
   });
 define("appkit/routes/main/company-list", 
   ["appkit/utils/auth","appkit/utils/cookieProxy","appkit/models/company","exports"],
@@ -6401,6 +6621,51 @@ define("appkit/routes/main/company-list/company-detail",
 
     });
     __exports__["default"] = companyDetailRoute;
+  });
+define("appkit/routes/main/company-list2", 
+  ["appkit/utils/auth","appkit/utils/cookieProxy","appkit/models/company","exports"],
+  function(__dependency1__, __dependency2__, __dependency3__, __exports__) {
+    "use strict";
+    var auth = __dependency1__["default"];
+    var cookieProxy = __dependency2__["default"];
+    var CompanyModel = __dependency3__["default"];
+
+    var CompanyList2Route = Ember.Route.extend({
+    	
+    	beforeModel: function(transition) {
+    		auth.loginChecking(transition, this);
+    	},
+    	model: function(params) {
+
+
+    		if (params.page_id == ' ') {
+
+    			cookieProxy.removeCookie('companyData');
+    			params.page_id = 1;
+    			this.controllerFor('main.companyList2').set('search', '');
+    			this.transitionTo('main.companyList2', 1);
+    		}
+
+    		var searchData = {
+    			currentPage: params.page_id,
+    		};
+
+    		var success = function(data) {
+    			console.log('success3');
+    			return data;
+    		};
+    /*
+    		var error = function(data) {
+    			console.log('error3');
+    			console.log(data);
+    			return data;
+    		};*/
+
+    		return CompanyModel.findByPage(searchData).then(success);
+    	},
+
+    });
+    __exports__["default"] = CompanyList2Route;
   });
 define("appkit/routes/main/index", 
   ["appkit/utils/auth","exports"],
@@ -7072,6 +7337,15 @@ define("appkit/utils/sidemenuData",
                         href: 'main.projectList',
                         params: ' '
                     } 
+                },
+                {
+                    isPage: true,
+                    icon: 'icon-table',
+                    name: '營業人資料列表(測試render與slide效果)',
+                    page: {
+                        href: 'main.companyList2',
+                        params: ' '
+                    } 
                 }
             ]
     	},
@@ -7158,7 +7432,7 @@ define("appkit/views/container",
 
     	viewsAry.forEach(function(value, key) {
     		
-    		if (value.state == 'destroying') {
+    		if (value._state == 'destroying') {
     			console.log('&&&&&: ' + key);
     			viewsAry.splice(key, 1);
     		}
@@ -7675,11 +7949,29 @@ define("appkit/views/main/company-list/company-detail",
 
     __exports__["default"] = companyDetailView;
   });
-define("appkit/views/main/index", 
-  ["appkit/views/fadeView","exports"],
-  function(__dependency1__, __exports__) {
+define("appkit/views/main/company-list2/company-item", 
+  ["exports"],
+  function(__exports__) {
     "use strict";
-    var fadeView = __dependency1__["default"];
+    // 如果有建view, 就要指定tagName為何, 不然會ember惠預設為div 
+    var companyItemView = Ember.View.extend({  
+    	tagName: 'tr',
+    	didInsertElement: function() {
+    	    
+    	},
+    	willDestroyElement: function() {
+    		
+    	}
+    });
+
+    __exports__["default"] = companyItemView;
+  });
+define("appkit/views/main/index", 
+  ["exports"],
+  function(__exports__) {
+    "use strict";
+    /*
+    import fadeView from 'appkit/views/fadeView';
 
 
     var index = fadeView.extend({
@@ -7689,9 +7981,23 @@ define("appkit/views/main/index",
         }
     });
 
+    export default index;*/
+
+
+
+    // 如果有建view, 就要指定tagName為何, 不然會ember惠預設為div 
+    var index = Ember.View.extend({  
+    	didInsertElement: function() {
+    	    
+    	},
+    	willDestroyElement: function() {
+    		
+    	}
+    });
+
     __exports__["default"] = index;
   });
-define("appkit/views/main/project.list", 
+define("appkit/views/main/project-list", 
   ["appkit/views/container","exports"],
   function(__dependency1__, __exports__) {
     "use strict";
@@ -7707,7 +8013,6 @@ define("appkit/views/main/project.list",
             this._super(this);
         },
         click: function(event) {
-
 
             var target = $(event.target);
             var companyStatusCounter = null;
@@ -7725,7 +8030,12 @@ define("appkit/views/main/project.list",
                 companyStatusCounter.addClass('active');
             }
 
-        }
+        },
+        idChanged: function() {
+            // deal with the change
+            console.log(this.get('controller.myId'));
+            console.log('view idChange triggers!!!');
+        }.observes('controller.myId')
     });
 
     // export 這邊如果跟上面var 定義的不同, 就會沒畫面但是也沒跳出錯誤..
@@ -8188,6 +8498,104 @@ define("appkit/views/validate",
         }
     });
     __exports__["default"] = validate;
+  });
+define("appkit/views/viewtest", 
+  ["exports"],
+  function(__exports__) {
+    "use strict";
+
+    // 如果有錯誤訊息, 就加上.has-error, 如果沒有就拿掉
+
+    var viewtest = Ember.View.extend({
+
+        tagName: 'button',
+        classNames: ['myclassName1'],
+        classNameBindings: ['propertyA', 'propertyB', 'hovered', 
+                            'awesome:so-very-cool', 'isUrgent', 'IsCamel',
+                            'isEnabled:enabled:disabled', 'isSimpleEnabled::simpleDisabled'],
+        attributeBindings: ['book-id', 'data-name', 'attr'], // 一定要在attrubuteBindings寫屬性名稱, 才能在hbs中下屬性
+        propertyA: 'from-a',
+      	propertyB: function() {
+        	if (true) { 
+        		return 'from-b'; 
+        	}
+      	}.property(),
+        hovered: true, // 如果只有參數名, class名稱就會使用參數名
+        awesome: true, // 在classNameBindings中用a:b形式簡寫property與class名稱對應
+        isUrgent: true, // 如果是小駝峰寫法, class會自動換成is-urgent
+        IsCamel: true, // 用大駝峰classname會自動換成is-camel
+        isEnabled: false, // 如果希望true與false是兩個不同的class, 用a:b:c的形式來寫
+        isSimpleEnabled: false, // 用a::b 代表在false時候會加上class simpleDisabled, true時不會加上任何class
+        'book-id': 'hello', // 如果book-id沒在hbs輸入值, 就會塞入此default,
+        click: function() {
+            console.log(this.get('selection'));
+            this.set('selection', true);
+
+            // 取得所在controller的資料
+            console.log(this.get('controller.validateData'));
+
+            // 呼叫所在的controller的action
+            this.get('controller').send('fromView', 'param1', 'param2');
+        },
+        attr: function() {
+            var value = this.get('selection');
+            console.log(value);
+
+            /*
+            if(value == 'bbb') {
+                return false;
+            }
+            else {
+                return true;
+            }
+            */
+            if (value == 'aaa') {
+                return 'itisaaala!';
+            }
+            else if (value == 'bbb') {
+                return 'isisbbbla!';
+            }
+            else {
+                return 'nonononono!!!!'; 
+            }
+            //return this.get('value') == this.get('selection');   
+            
+            // 如果不是html內建的屬性,回傳true或false不會有任何反應  
+            // 內建屬性: disabled, selected, readonly...等
+            // return value;
+
+        }.property('selection'), // 當selection的值有變化時, 就觸發,然後重新render view
+        isChangeSelection: function() {
+
+            console.log('########isChange!!!');
+            //return 'aaa'; // return東西也不會壞掉，但是沒有意義
+        }.observes('selection'), // observes也是監聽物件或屬性的變化, 但是他沒有跟view綁定, 是更底層的操作
+
+
+    /*
+        click: function() {
+            console.log('click me!');
+        },*/
+
+        didInsertElement: function() {
+
+            //console.log('didInsertElement!!!');
+            //console.log($(this)); // 這樣寫是抓到ember view物件
+            //console.log(this.$()); // 這樣寫是抓到DOM物件
+    /*
+            $(this).on('click', function(e) {
+                //e.preventDefault();
+                console.log('####click!');
+            });*/
+
+            
+            this.$().on('click', function(e) {
+                console.log('####click!!!');
+            });
+        }
+    });
+
+    __exports__["default"] = viewtest;
   });
 define("appkit/views/watermark", 
   ["exports"],

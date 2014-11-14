@@ -56,6 +56,11 @@ var LoginController = Ember.ObjectController.extend({
 
 	actions: {
 
+		fromView: function(param1, param2) {
+			console.log('###$@@@@ fromView is triggered!');
+			console.log(param1);
+			console.log(param2);
+		},
 		login: function() {
 
 			console.log('trigger login!');

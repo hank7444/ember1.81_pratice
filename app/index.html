@@ -33,6 +33,9 @@
   <link rel="stylesheet" href="assets/components/statistic-list-ui.css">
   <!-- endbuild -->  
 
+  <!-- liquid fire套件用 -->
+  <link href="/assets/liquid-fire.css" rel="stylesheet">
+
 
   <link rel="stylesheet" href="assets/f2e.css">
 
@@ -69,12 +72,12 @@
   <script src="/vendor/bootstrap/bootstrap.min.js"></script>
   
   <!-- @if dist=false -->
-  <script src="/vendor/handlebars/handlebars.js"></script>
+  <script src="/vendor/handlebars/handlebars-v1.3.0.js"></script>
   <script src="/vendor/ember/ember.js"></script>
   <!-- @endif -->
 
   <!-- @if dist=true -->
-  <script src="/vendor/handlebars/handlebars.js"></script>
+  <script src="/vendor/handlebars/handlebars-v1.3.0.js"></script>
   <script src="/vendor/ember/ember.prod.js"></script>
   <!-- @endif -->
 
@@ -96,8 +99,8 @@
   <script src="/vendor/jquery/plugins/jquery.cookie.min.js"></script>
   <script src="/vendor/moment.min.js"></script>
   <script src="/vendor/showdown/showdown.min.js"></script>
-
   <script src="/vendor/jquery/jquery-ui-1.10.3.custom.js"></script>
+
 
 
   <!-- bootstrap套件-->
@@ -113,6 +116,11 @@
   <script src="/vendor/flatty/javascripts/plugins/bootstrap_daterangepicker/bootstrap-daterangepicker.js"></script>
   <script src="/assets/vendor/ckeditor/ckeditor.js"></script>
 
+  
+  <!-- liquid fire套件用 -->
+  <script src="/vendor/liquid-fire/velocity.min.js"></script>
+  <script src="/vendor/liquid-fire/liquid-fire-0.12.0.js"></script>
+  <script src="/vendor/ember-load-initializers/ember-load-initializers.js"></script>
 
 
 
@@ -168,6 +176,10 @@
     //window.App = require('appkit/app')["default"].createWithMixins(Bootstrap.Register);
 
     window.App = require('appkit/app')['default'].create(Bootstrap.Register);
+    /*
+    window.LiquidFireENV = require('liquid-fire/config/environment')['default'];
+    window.EmberENV = window.LiquidFireENV.EmberENV;
+    window.LiquidFire = require('liquid-fire/app')['default'].create(LiquidFireENV.APP);*/
   </script>
   <!-- @endif -->
 

@@ -1,0 +1,19 @@
+<tr>
+    <td>{{item.companyId}}</td>
+    <td>{{item.companyName}}</td>
+    <td>{{item.registrationNo}}</td>
+    <td>{{item.permitDate}}</td>
+    <td>{{item.permitWord}}</td>
+    <td>{{item.contactPersonEmail}}</td>
+    <td><span {{bind-attr class=":badge item.hasSoftwareCerfLabelClass"}}>{{item.hasSoftwareCerfMsg}}</span></td>
+    <td><span {{bind-attr class=":badge item.auditStatusLabelClass"}}>{{item.auditStatusMsg}}</span></td>
+    <td><span {{bind-attr class=":badge item.statusLabelClass"}}>{{item.statusMsg}}</span></td>
+    <td>
+      <div class='text-left'>
+        {{#link-to 'main.companyDetail2' item.companyId class='btn btn-success btn-xs'}}
+          詳細
+        {{/link-to}}
+      </div>
+    </td>
+</tr>
+

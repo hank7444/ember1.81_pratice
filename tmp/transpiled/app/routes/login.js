@@ -14,6 +14,13 @@ define("appkit/routes/login",
     	model: function() {
 
     		return Login.create();
+    	},
+    	actions:  { // 如果controller沒設相對應的action, 就會一路來到route這裡
+    		fromView: function(param1, param2) {
+    			console.log('route action trigger!!')
+    			console.log(param1);
+    			console.log(param2);
+    		}
     	}
 
     });

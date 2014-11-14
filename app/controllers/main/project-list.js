@@ -16,8 +16,9 @@ var ProjectListController = Ember.ArrayController.extend({
 
         var data = this.get('model');
 
-        data.forEach(function(item) {
+        data.forEach(function(item, index) {
 
+            item['index'] = index;
             item['statusMsg'] = item.status == 'Y' ? '啟用' : '停用';
             item['statusLabelClass'] = item.status == 'Y' ? 'badge-success' : 'badge-important';
             item['consoleStatusMsg'] = item.consoleStatus == 'enable' ? '開啟' : item.consoleStatus == 'disable' ? '關閉' : '刪除';
@@ -177,6 +178,11 @@ var ProjectListController = Ember.ArrayController.extend({
 
     actions: {
 
+        // 改變時會去觸發view有observers myId的function
+        triggerView: function(id) {
+            console.log('#####id: ' + id);
+            this.set('myId', id);
+        },
 
         // 開啟編輯頁面
         editProject: function(id) {

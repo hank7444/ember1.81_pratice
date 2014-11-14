@@ -54,7 +54,7 @@ module.exports = function(server) {
                 'pageSize': pageSize,
                 'company': paginatorOutput.outputData
             };
-            res.status(500).send(resData);
+            res.send(resData);
         });
 
         server.get('/company/1', function(req, res) {

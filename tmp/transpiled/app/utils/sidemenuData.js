@@ -29,6 +29,15 @@ define("appkit/utils/sidemenuData",
                         href: 'main.projectList',
                         params: ' '
                     } 
+                },
+                {
+                    isPage: true,
+                    icon: 'icon-table',
+                    name: '營業人資料列表(測試render與slide效果)',
+                    page: {
+                        href: 'main.companyList2',
+                        params: ' '
+                    } 
                 }
             ]
     	},

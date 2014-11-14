@@ -1,0 +1,133 @@
+
+<div class="col-xs-12 fade-block" {{bind-attr class="show:hide-opacity:show-opacity"}}>
+
+  <div class="row">
+    <div class="col-sm-12">
+        <div class="page-header">
+
+          <h1 class="pull-left">
+            <i class="icon-table"></i>
+            <span>營業人資料列表管理</span>
+          </h1>
+
+          <div class="pull-right">
+            <ul class="breadcrumb">
+
+            <li>
+              {{#link-to "main"}}
+                <i class="icon-home"></i>
+              {{/link-to}}
+            </li>
+
+            <li class="separator">
+              <i class="icon-angle-right"></i>
+            </li>
+
+            <li>營業人管理</li>
+
+            <li class="separator">
+              <i class="icon-angle-right"></i>
+            </li>
+
+            <li class="active">營業人資料列表管理</li>
+
+            </ul>
+          </div>
+        </div>
+    </div>
+  </div>
+
+
+  <div class="row">
+    <div class='col-sm-12'>
+
+      <div class="box">
+        <div class="box-contnet">
+         
+        </div>
+      </div>
+
+      <div class='box bordered-box blue-border' style='margin-bottom:0;'>
+            
+            <div class='box-header-f2e blue-background'>
+              <div class='title'></div>
+              <div class='actions'>
+                <form class="navbar-form navbar-right hidden-xs" method="get" action="">
+                           
+                  <div class="form-group">                   
+                  </div>
+
+                </form>
+              </div>
+            </div>
+
+            <div class='box-content box-no-padding'>
+              <div class='responsive-table'>
+                <div class='scrollable-area'>
+
+                  <table class='table table-striped' style='margin-bottom:0;'>
+                    <thead>
+                      <tr>
+                        <th>
+                          流水號
+                        </th>
+                        <th>
+                          營業人
+                        </th>
+                        <th>
+                          統一編號
+                        </th>
+                        <th>
+                          核准日
+                        </th>
+
+                        <th>
+                          核准文號
+                        </th>
+
+                        <th>
+                          聯絡人信箱
+                        </th>
+
+                        <th>
+                          軟體憑證狀態
+                        </th>
+
+                        <th>
+                          審核狀態
+                        </th>
+
+                        <th>
+                          狀態
+                        </th>
+
+                        <th>
+                          編輯/刪除
+                        </th>
+                      </tr>
+                    </thead>
+
+                    <tbody>
+
+                    {{!-- 
+                      改用render的寫法 
+                      如果handlebar直接用this, 等於controller的this.modal
+                    --}}
+                    {{#each data in this}}
+                      {{render "main.companyList2.companyItem" data}}
+                    {{/each}}
+                  
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          
+          {{pages-ui currentPage=pageData.currentPage totalPage=pageData.totalPage pageSize=pageData.pageSize action="changePage"}}
+
+     
+      </div>
+
+    </div>
+  </div>
+</div>

@@ -35,13 +35,13 @@ CompanyModel.reopenClass({
 
         var that = this;
 
-        var success = function() {
+        var success = function(res) {
             console.log('success2');
             console.log(res);
             return CompanyModel.create(res);  
         };
 
-        var error = function() {
+        var error = function(res) {
             console.log('error2');
             return res;
         };

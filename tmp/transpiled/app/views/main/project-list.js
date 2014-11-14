@@ -1,4 +1,4 @@
-define("appkit/views/main/project.list", 
+define("appkit/views/main/project-list", 
   ["appkit/views/container","exports"],
   function(__dependency1__, __exports__) {
     "use strict";
@@ -14,7 +14,6 @@ define("appkit/views/main/project.list",
             this._super(this);
         },
         click: function(event) {
-
 
             var target = $(event.target);
             var companyStatusCounter = null;
@@ -32,7 +31,12 @@ define("appkit/views/main/project.list",
                 companyStatusCounter.addClass('active');
             }
 
-        }
+        },
+        idChanged: function() {
+            // deal with the change
+            console.log(this.get('controller.myId'));
+            console.log('view idChange triggers!!!');
+        }.observes('controller.myId')
     });
 
     // export 這邊如果跟上面var 定義的不同, 就會沒畫面但是也沒跳出錯誤..

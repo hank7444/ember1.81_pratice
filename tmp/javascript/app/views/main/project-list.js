@@ -11,7 +11,6 @@ var projectListView = containerView.extend({
     },
     click: function(event) {
 
-
         var target = $(event.target);
         var companyStatusCounter = null;
 
@@ -28,7 +27,12 @@ var projectListView = containerView.extend({
             companyStatusCounter.addClass('active');
         }
 
-    }
+    },
+    idChanged: function() {
+        // deal with the change
+        console.log(this.get('controller.myId'));
+        console.log('view idChange triggers!!!');
+    }.observes('controller.myId')
 });
 
 // export 這邊如果跟上面var 定義的不同, 就會沒畫面但是也沒跳出錯誤..

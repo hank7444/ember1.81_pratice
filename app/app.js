@@ -2,6 +2,7 @@ import Resolver from 'resolver';
 //import registerComponents from 'appkit/utils/register_components';
 import Storage from 'appkit/models/base';
 import routeProxy from 'appkit/utils/routeProxy';
+import loadInitializers from 'ember/load-initializers';
 
 
 var App = Ember.Application.extend({
@@ -127,5 +128,8 @@ App.initializer({
     }
 });
 
+// 用ember/load-initializers來做initialize
+// 會將initializers/資料夾內的js都跑過
+loadInitializers(App, 'appkit');
 
 export default App;
